@@ -1,0 +1,59 @@
+{
+  "name": "bugo/smf-bricks",
+  "description": "Collection of some building blocks for SMF",
+  "type": "library",
+  "keywords": [
+    "smf",
+    "helpers",
+    "tables",
+    "forms",
+    "presenters"
+  ],
+  "homepage": "https://github.com/dragomano/SMF-Bricks",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Bugo",
+      "email": "bugo@dragomano.ru"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Bugo\\Bricks\\": "src/Bricks/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Tests\\": "tests/"
+    }
+  },
+  "require": {
+    "php": "^8.1",
+    "bugo/smf-compat": "^0.2",
+    "nette/utils": "^4.0",
+    "spatie/array-to-xml": "^3.3"
+  },
+  "require-dev": {
+    "mockery/mockery": "^1.6",
+    "pestphp/pest": "^2.36",
+    "rector/rector": "^1.2"
+  },
+  "scripts": {
+    "check": "vendor/bin/rector process --dry-run --clear-cache",
+    "tests": "vendor/bin/pest --colors=always",
+    "tests-coverage": "vendor/bin/pest --colors=always --coverage --min=90",
+    "tests-coverage-clover": "vendor/bin/pest --colors=always --min=90 --coverage-clover coverage.xml",
+    "tests-coverage-html": "vendor/bin/pest --colors=always --min=90 --coverage-html coverage"
+  },
+  "config": {
+    "optimize-autoloader": true,
+    "preferred-install": "dist",
+    "sort-packages": true,
+    "platform": {
+      "php": "8.1"
+    },
+    "allow-plugins": {
+      "pestphp/pest-plugin": true
+    }
+  }
+}
