@@ -111,10 +111,12 @@ class FormPresenter implements FormPresenterInterface
 
 		if ($field['type'] === HtmlFieldType::RADIO->value) {
 			$result = self::prepareRadioOptions($field);
+		} elseif ($name === HtmlFieldType::SELECT->value) {
+			$result = self::prepareSelectOptions($field);
 		}
 
-		if ($name === HtmlFieldType::SELECT->value) {
-			$result = self::prepareSelectOptions($field);
+		if (in_array($field['type'], [HtmlFieldType::SELECT->value, HtmlFieldType::TEXTAREA->value])) {
+			$result->type(null);
 		}
 
 		return Html::el('dl', ['class' => 'settings'])
@@ -168,11 +170,11 @@ class FormPresenter implements FormPresenterInterface
 			$selected = $field['selected'] ?? false;
 
 			$result->addHtml(
-				Html::el('input', ['value' => $key])
-					->type(HtmlFieldType::RADIO->value)
+				Html::el('input', $value)
 					->name($field['name'])
+					->value($key)
+					->type(HtmlFieldType::RADIO->value)
 					->checked($selected === $key)
-					->setText($value)
 			);
 		}
 
@@ -189,7 +191,7 @@ class FormPresenter implements FormPresenterInterface
 			HtmlFieldType::SELECT->value,
 			array_filter(
 				$field,
-				fn($key) => ! in_array($key, ['value', 'selected', 'options']),
+				fn($key) => ! in_array($key, ['value', 'selected', 'options', 'type']),
 				ARRAY_FILTER_USE_KEY
 			)
 		);
@@ -200,9 +202,9 @@ class FormPresenter implements FormPresenterInterface
 			$selected = $field['selected'] ?? false;
 
 			$result->addHtml(
-				Html::el('option', ['value' => $key])
+				Html::el('option', $value)
+					->value($key)
 					->selected($selected === $key)
-					->setText($value)
 			);
 		}
 

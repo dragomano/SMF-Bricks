@@ -2,7 +2,7 @@
 
 namespace Bugo\Bricks\Forms\Interfaces;
 
-interface OptionableInterface
+interface OptionProviderInterface
 {
 	public function setOptions(array $options): static;
 

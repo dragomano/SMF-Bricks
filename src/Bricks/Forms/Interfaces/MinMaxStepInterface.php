@@ -2,7 +2,7 @@
 
 namespace Bugo\Bricks\Forms\Interfaces;
 
-interface StepableInterface
+interface MinMaxStepInterface
 {
 	public function setMin(float|int $value = 0): static;
 

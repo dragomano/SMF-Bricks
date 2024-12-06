@@ -2,11 +2,11 @@
 
 namespace Bugo\Bricks\Forms;
 
-use Bugo\Bricks\Forms\Interfaces\StepableInterface;
+use Bugo\Bricks\Forms\Interfaces\MinMaxStepInterface;
 use Bugo\Bricks\Forms\Traits\HasMinMaxStepAttributes;
 use Bugo\Bricks\Forms\Traits\HasPatternAttribute;
 
-class DateField extends NumberField implements StepableInterface
+class DateField extends NumberField implements MinMaxStepInterface
 {
 	use HasMinMaxStepAttributes;
 	use HasPatternAttribute;

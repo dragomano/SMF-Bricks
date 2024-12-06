@@ -2,16 +2,22 @@
 
 namespace Bugo\Bricks\Forms;
 
-use Bugo\Bricks\Forms\Interfaces\OptionableInterface;
+use Bugo\Bricks\Forms\Interfaces\OptionProviderInterface;
+use Bugo\Bricks\Forms\Interfaces\SelectableInterface;
 use Bugo\Bricks\Forms\Interfaces\SizeableInterface;
 use Bugo\Bricks\Forms\Traits\HasMultipleAttribute;
 use Bugo\Bricks\Forms\Traits\HasOptions;
+use Bugo\Bricks\Forms\Traits\HasSelectedAttribute;
 use Bugo\Bricks\Forms\Traits\HasSizeAttribute;
 
-class SelectField extends Field implements OptionableInterface, SizeableInterface
+use function implode;
+use function is_array;
+
+class SelectField extends Field implements OptionProviderInterface, SelectableInterface, SizeableInterface
 {
 	use HasMultipleAttribute;
 	use HasOptions;
+	use HasSelectedAttribute;
 	use HasSizeAttribute;
 
 	protected function __construct(string $name, string $label)
@@ -23,9 +29,13 @@ class SelectField extends Field implements OptionableInterface, SizeableInterfac
 
 	public function setValue(mixed $value): static
 	{
-		if (! empty($this->attributes['multiple'])) {
+		if (empty($this->attributes['multiple'])) {
+			$value = is_array($value) ? implode(',', $value) : (string) $value;
+		} else {
 			$value = (array) $value;
 		}
+
+		$this->selected($value);
 
 		return parent::setValue($value);
 	}
