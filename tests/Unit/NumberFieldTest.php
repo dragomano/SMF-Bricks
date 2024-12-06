@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-use Bugo\Bricks\Forms\Interfaces\StepableInterface;
+use Bugo\Bricks\Forms\Interfaces\MinMaxStepInterface;
 use Bugo\Bricks\Forms\NumberField;
 use Bugo\Bricks\Forms\Field;
 use Bugo\Bricks\Forms\HtmlFieldType;
@@ -15,7 +15,7 @@ it('is an instance of Field class', function () {
 });
 
 it('implements some interfaces', function () {
-	expect(NumberField::class)->toImplement(StepableInterface::class);
+	expect(NumberField::class)->toImplement(MinMaxStepInterface::class);
 });
 
 it('can set a value', function () {

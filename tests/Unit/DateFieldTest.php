@@ -3,7 +3,7 @@
 use Bugo\Bricks\Forms\DateField;
 use Bugo\Bricks\Forms\Field;
 use Bugo\Bricks\Forms\HtmlFieldType;
-use Bugo\Bricks\Forms\Interfaces\StepableInterface;
+use Bugo\Bricks\Forms\Interfaces\MinMaxStepInterface;
 
 beforeEach(function () {
 	$this->field = DateField::make('date_field', 'Enter your date');
@@ -19,5 +19,5 @@ it('can set a value', function () {
 });
 
 it('implements some interfaces', function () {
-	expect(DateField::class)->toImplement(StepableInterface::class);
+	expect(DateField::class)->toImplement(MinMaxStepInterface::class);
 });

@@ -2,7 +2,8 @@
 
 use Bugo\Bricks\Forms\Field;
 use Bugo\Bricks\Forms\HtmlFieldType;
-use Bugo\Bricks\Forms\Interfaces\OptionableInterface;
+use Bugo\Bricks\Forms\Interfaces\OptionProviderInterface;
+use Bugo\Bricks\Forms\Interfaces\SelectableInterface;
 use Bugo\Bricks\Forms\Interfaces\SizeableInterface;
 use Bugo\Bricks\Forms\SelectField;
 
@@ -21,7 +22,8 @@ it('is an instance of Field class', function () {
 });
 
 it('implements some interfaces', function () {
-	expect(SelectField::class)->toImplement(OptionableInterface::class)
+	expect(SelectField::class)->toImplement(OptionProviderInterface::class)
+		->and(SelectField::class)->toImplement(SelectableInterface::class)
 		->and(SelectField::class)->toImplement(SizeableInterface::class);
 });
 

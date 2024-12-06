@@ -119,6 +119,8 @@ it('throws InvalidArgumentException when SelectField options are missing', funct
 })->throws(InvalidArgumentException::class);
 
 it('renders the form correctly with filled $_POST data', function () {
+	$_POST['username'] = 'John Doe';
+	$_POST['email'] = 'john@doe.com';
 	$_POST['check'] = 'on';
 	$_POST['textarea'] = 'foo bar';
 	$_POST['select'] = 'no';
@@ -128,8 +130,10 @@ it('renders the form correctly with filled $_POST data', function () {
 	FormPresenter::show($this->builder);
 	$output = ob_get_clean();
 
-	expect($output)->toContain('<input name="check" id="check" type="checkbox" checked value="on">')
-		->and($output)->toContain('<textarea name="textarea" id="textarea" type="textarea">foo bar</textarea>')
-		->and($output)->toContain('<select name="select" id="select" type="select"><option value="no" selected>No</option><option value="yes">Yes</option></select>')
-		->and($output)->toContain('<input value="no" type="radio" name="radio"><input value="yes" type="radio" name="radio" checked>');
+	expect($output)->toContain('<input name="username" id="username" type="text" value="John Doe">')
+		->and($output)->toContain('<input name="email" id="email" type="email" value="john&#64;doe.com">')
+		->and($output)->toContain('<input name="check" id="check" type="checkbox" checked value="on">')
+		->and($output)->toContain('<textarea name="textarea" id="textarea">foo bar</textarea>')
+		->and($output)->toContain('<select name="select" id="select"><option value="no" selected>No</option><option value="yes">Yes</option></select>')
+		->and($output)->toContain('<input name="radio" value="no" type="radio"><input name="radio" value="yes" type="radio" checked>');
 });

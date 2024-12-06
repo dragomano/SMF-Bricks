@@ -1,5 +1,7 @@
 <?php declare(strict_types=1);
 
+use Bugo\Bricks\Forms\Interfaces\OptionProviderInterface;
+use Bugo\Bricks\Forms\Interfaces\SelectableInterface;
 use Bugo\Bricks\Forms\RadioField;
 use Bugo\Bricks\Forms\Field;
 use Bugo\Bricks\Forms\HtmlFieldType;
@@ -15,6 +17,11 @@ beforeEach(function () {
 it('is an instance of Field class', function () {
 	expect($this->field)->toBeInstanceOf(Field::class)
 		->and($this->field->getType())->toBe(HtmlFieldType::RADIO->value);
+});
+
+it('implements some interfaces', function () {
+	expect(RadioField::class)->toImplement(OptionProviderInterface::class)
+		->and(RadioField::class)->toImplement(SelectableInterface::class);
 });
 
 it('can set a value', function () {
