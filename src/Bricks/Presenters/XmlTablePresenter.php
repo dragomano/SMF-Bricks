@@ -22,7 +22,9 @@ class XmlTablePresenter extends AbstractTablePresenter
 		header('Content-Type: application/xml; charset=UTF-8');
 
 		ob_start();
+
 		TablePresenter::show($builder->removeScript());
+
 		ob_get_clean();
 
 		$data = Utils::$context[Utils::$context['default_list']];

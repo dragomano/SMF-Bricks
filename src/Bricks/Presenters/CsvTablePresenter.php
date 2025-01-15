@@ -29,7 +29,9 @@ class CsvTablePresenter extends AbstractTablePresenter
 		header('Content-Disposition: attachment; filename="export.csv"');
 
 		ob_start();
+
 		TablePresenter::show($builder->removeScript());
+
 		ob_get_clean();
 
 		$data = Utils::$context[Utils::$context['default_list']];

@@ -6,6 +6,11 @@ use Bugo\Bricks\Tables\Interfaces\TableBuilderInterface;
 use Bugo\Compat\ItemList;
 use Bugo\Compat\Utils;
 
+use function array_filter;
+use function in_array;
+
+use const ARRAY_FILTER_USE_KEY;
+
 class TablePresenter extends AbstractTablePresenter
 {
 	public static function show(TableBuilderInterface $builder): void

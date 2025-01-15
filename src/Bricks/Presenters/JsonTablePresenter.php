@@ -3,7 +3,6 @@
 namespace Bugo\Bricks\Presenters;
 
 use Bugo\Bricks\Tables\Interfaces\TableBuilderInterface;
-
 use Bugo\Compat\Utils;
 
 use function header;
@@ -26,7 +25,9 @@ class JsonTablePresenter extends AbstractTablePresenter
 		header('Cache-Control: no-cache');
 
 		ob_start();
+
 		TablePresenter::show($builder->removeScript());
+
 		ob_get_clean();
 
 		$data = Utils::$context[Utils::$context['default_list']];
