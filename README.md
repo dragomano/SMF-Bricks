@@ -203,10 +203,3 @@ FormPresenter::show($builder);
 ![preview](https://github.com/user-attachments/assets/c326e937-f11d-443c-ab96-a4b489a69dbb)
 
 More usage examples can be found in the tests, as well as in the [Light Portal](https://github.com/dragomano/Light-Portal/tree/master/src/Sources/LightPortal) project.
-
-## In Development (contributions are welcome)
-
-- [ ] ApiTablePresenter
-- [x] CsvTablePresenter
-- [x] JsonTablePresenter
-- [x] XmlTablePresenter
