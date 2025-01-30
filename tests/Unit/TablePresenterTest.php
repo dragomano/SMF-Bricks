@@ -4,7 +4,7 @@ use Bugo\Bricks\Presenters\TablePresenter;
 use Bugo\Bricks\Tables\Interfaces\TableBuilderInterface;
 use Bugo\Compat\Utils;
 
-it('renders JSON correctly', function () {
+it('renders a table correctly', function () {
 	$builder = mock(TableBuilderInterface::class);
 	$builder->shouldReceive('build')->andReturn(Utils::$context['table_id']);
 	$builder->shouldReceive('removeScript')->andReturn($builder);
