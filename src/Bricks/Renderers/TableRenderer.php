@@ -1,25 +1,28 @@
 <?php declare(strict_types=1);
 
+namespace Bugo\Bricks\Renderers;
+
 use Nette\Utils\Html;
 
-if (! function_exists('createList')) {
-	function createList(array $listOptions): void
+class TableRenderer implements RendererInterface
+{
+	public function render(array $data): void
 	{
 		$root = Html::el();
 		$form = Html::el('form');
 
-		if (isset($listOptions['title'])) {
+		if (isset($data['title'])) {
 			$div = Html::el('div')->class('cat_bar');
-			$h3 = Html::el('h3')->class('cat' . 'bg')->setHtml($listOptions['title']);
+			$h3 = Html::el('h3')->class('cat' . 'bg')->setHtml($data['title']);
 			$div->addHtml($h3);
 			$form->addHtml($div);
 		}
 
-		$table = Html::el('table')->id($listOptions['id']);
+		$table = Html::el('table')->id($data['id']);
 		$tr = Html::el('tr');
 
-		if (! empty($listOptions['headers'])) {
-			foreach ($listOptions['headers'] as $header) {
+		if (! empty($data['headers'])) {
+			foreach ($data['headers'] as $header) {
 				$th = Html::el('th');
 				$th->id($header['id']);
 				$th->class($header['class'] ?? null);
@@ -32,13 +35,13 @@ if (! function_exists('createList')) {
 
 		$table->addHtml($tr);
 
-		if (! empty($listOptions['rows'])) {
-			foreach ($listOptions['rows'] as $row) {
-				$data = $row['data'];
+		if (! empty($data['rows'])) {
+			foreach ($data['rows'] as $row) {
+				$rowData = $row['data'];
 				$tr = Html::el('tr');
 				$tr->class('window' . 'bg');
 
-				foreach ($data as $cell) {
+				foreach ($rowData as $cell) {
 					$td = Html::el('td');
 					$td->class($cell['class'] ?? null);
 					$td->style($cell['style'] ?? null);
@@ -54,8 +57,8 @@ if (! function_exists('createList')) {
 		$form->addHtml($table);
 		$root->addHtml($form);
 
-		if (! empty($listOptions['javascript'])) {
-			$script = Html::el('script')->setText($listOptions['javascript']);
+		if (! empty($data['javascript'])) {
+			$script = Html::el('script')->setText($data['javascript']);
 			$root->addHtml($script);
 		}
 

@@ -72,7 +72,7 @@ $context['sub_template'] = 'show_list';
 $context['default_list'] = 'group_lists';
 ```
 
-Как же такую структуру можно сформировать с помощью `TableBuilder`? Благодаря `fluent interface` очень элегантно и просто:
+Как же такую структуру можно сформировать с помощью `TableBuilder`? Благодаря `текучему интерфейсу` очень элегантно и просто:
 
 ```php
 $builder = TableBuilder::make('table_id', 'Заголовок таблицы')
@@ -90,10 +90,10 @@ $builder = TableBuilder::make('table_id', 'Заголовок таблицы')
 С помощью строителя строим, с помощью презентера - отображаем то, что построили:
 
 ```php
-TablePresenter::show($builder);
+$renderer = new TableRenderer();
+$presenter = new TablePresenter($renderer);
+$presenter->show($builder);
 ```
-
-Текущий презентер для таблиц пока жёстко привязан к SMF и вне форума вы таблицу не построите.
 
 Вместо универсального метода `withParams` есть также более точечные: `paginate`, `setNoItemsLabel`, `setFormAction` и `setDefaultSortColumn`.
 
@@ -197,7 +197,9 @@ $builder->addHiddenFields([
 Конечно же, для `FormBuilder` есть собственный презентер — `FormPresenter`, предназначенный для отображения сформированных форм в браузере:
 
 ```php
-FormPresenter::show($builder);
+$renderer = new FormRenderer();
+$presenter = new FormPresenter($renderer);
+$presenter->show($builder);
 ```
 
 ![preview](https://github.com/user-attachments/assets/3355fa0f-4f6d-47b6-a6d9-9650f7260427)

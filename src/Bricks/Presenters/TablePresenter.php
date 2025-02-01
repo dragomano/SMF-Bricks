@@ -2,9 +2,8 @@
 
 namespace Bugo\Bricks\Presenters;
 
+use Bugo\Bricks\Renderers\RendererInterface;
 use Bugo\Bricks\Tables\Interfaces\TableBuilderInterface;
-use Bugo\Compat\ItemList;
-use Bugo\Compat\Utils;
 
 use function array_filter;
 use function in_array;
@@ -13,7 +12,9 @@ use const ARRAY_FILTER_USE_KEY;
 
 class TablePresenter extends AbstractTablePresenter
 {
-	public static function show(TableBuilderInterface $builder): void
+	public function __construct(private readonly RendererInterface $renderer) {}
+
+	public function show(TableBuilderInterface $builder): void
 	{
 		$data = $builder->build();
 
@@ -23,9 +24,6 @@ class TablePresenter extends AbstractTablePresenter
 			ARRAY_FILTER_USE_KEY
 		);
 
-		new ItemList($data);
-
-		Utils::$context['sub_template'] = 'show_list';
-		Utils::$context['default_list'] = $builder->getId();
+		$this->renderer->render($data);
 	}
 }

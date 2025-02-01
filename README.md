@@ -90,10 +90,10 @@ $builder = TableBuilder::make('table_id', 'Table title')
 We build with the builder, and with the presenter, we display what we've built:
 
 ```php
-TablePresenter::show($builder);
+$renderer = new TableRenderer();
+$presenter = new TablePresenter($renderer);
+$presenter->show($builder);
 ```
-
-The current presenter for tables is still tightly bound to SMF, so you can't build the table outside the forum.
 
 Instead of the universal method `withParams`, there are also more specific ones: `paginate`, `setNoItemsLabel`, `setFormAction`, and `setDefaultSortColumn`.
 
@@ -197,7 +197,9 @@ $builder->addHiddenFields([
 Of course, there is a dedicated presenter for `FormBuilder` — `FormPresenter`, designed to display the built forms in the browser:
 
 ```php
-FormPresenter::show($builder);
+$renderer = new FormRenderer();
+$presenter = new FormPresenter($renderer);
+$presenter->show($builder);
 ```
 
 ![preview](https://github.com/user-attachments/assets/c326e937-f11d-443c-ab96-a4b489a69dbb)
