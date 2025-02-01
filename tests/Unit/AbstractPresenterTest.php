@@ -5,7 +5,7 @@ use Bugo\Bricks\Tables\Interfaces\TableBuilderInterface;
 
 it('renders output correctly', function () {
 	$testPresenter = new class extends AbstractTablePresenter {
-		public static function show(TableBuilderInterface $builder): void
+		public function show(TableBuilderInterface $builder): void
 		{
 			echo 'Test output';
 		}

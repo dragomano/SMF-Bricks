@@ -10,9 +10,13 @@ use Bugo\Bricks\Forms\SubmitButton;
 use Bugo\Bricks\Forms\TextareaField;
 use Bugo\Bricks\Forms\TextField;
 use Bugo\Bricks\Presenters\FormPresenter;
+use Bugo\Bricks\Renderers\FormRenderer;
 
 beforeEach(function () {
 	$_SERVER['REQUEST_METHOD'] = 'POST';
+
+	$renderer = new FormRenderer();
+	$this->presenter = new FormPresenter($renderer);
 
 	$this->builder = FormBuilder::make('form_id', 'Test Form')
 		->addFields([
@@ -45,7 +49,7 @@ beforeEach(function () {
 
 it('renders the form correctly', function () {
 	ob_start();
-	FormPresenter::show($this->builder);
+	$this->presenter->show($this->builder);
 	$output = ob_get_clean();
 
 	expect($output)->toContain('id="form_id"')
@@ -61,7 +65,7 @@ it('renders the form correctly with $_GET query', function () {
 	$_SERVER['REQUEST_METHOD'] = 'GET';
 
 	ob_start();
-	FormPresenter::show($this->builder);
+	$this->presenter->show($this->builder);
 	$output = ob_get_clean();
 
 	expect($output)->toContain('id="form_id"')
@@ -80,7 +84,7 @@ it('renders the form without buttons', function () {
 		]);
 
 	ob_start();
-	FormPresenter::show($builder);
+	$this->presenter->show($builder);
 	$output = ob_get_clean();
 
 	expect($output)->toContain('id="form_id"')
@@ -97,7 +101,7 @@ it('throws InvalidArgumentException when RadioField options are missing', functi
 	ob_end_flush();
 
 	ob_start();
-	FormPresenter::show($builder);
+	$this->presenter->show($builder);
 	$output = ob_get_clean();
 
 	expect($output)->toThrow(InvalidArgumentException::class);
@@ -112,7 +116,7 @@ it('throws InvalidArgumentException when SelectField options are missing', funct
 	ob_end_flush();
 
 	ob_start();
-	FormPresenter::show($builder);
+	$this->presenter->show($builder);
 	$output = ob_get_clean();
 
 	expect($output)->toThrow(InvalidArgumentException::class);
@@ -127,7 +131,7 @@ it('renders the form correctly with filled $_POST data', function () {
 	$_POST['radio'] = 'yes';
 
 	ob_start();
-	FormPresenter::show($this->builder);
+	$this->presenter->show($this->builder);
 	$output = ob_get_clean();
 
 	expect($output)->toContain('<input name="username" id="username" type="text" value="John Doe">')

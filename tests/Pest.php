@@ -12,26 +12,8 @@
 */
 
 // uses(Tests\TestCase::class)->in('Feature');
-use Bugo\Compat\Config;
-use Bugo\Compat\Utils;
 
 uses()->beforeAll(function () {
-	Config::$sourcedir = __DIR__ . DIRECTORY_SEPARATOR . 'files';
-
-	Utils::$context['default_list'] = 'table_id';
-	Utils::$context['table_id'] = [
-		'id' => 'table_id',
-		'title' => 'Test Table',
-		'items_per_page' => 10,
-		'headers' => [
-			['id' => 'username', 'label' => 'Username'],
-			['id' => 'email', 'label' => 'Email'],
-		],
-		'rows' => [
-			['data' => ['username' => ['value' => 'test_user'], 'email' => ['value' => 'test@example.com']]],
-			['data' => ['username' => ['value' => 'another_user'], 'email' => ['value' => 'another@example.com']]],
-		],
-	];
 })->in(__DIR__);
 
 /*
