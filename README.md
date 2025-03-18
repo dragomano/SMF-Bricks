@@ -204,4 +204,50 @@ $presenter->show($builder);
 
 ![preview](https://github.com/user-attachments/assets/c326e937-f11d-443c-ab96-a4b489a69dbb)
 
+## Settings
+
+We’re excited to share some good news for those who find working with arrays while creating settings a bit tedious. For instance, the Light Portal settings block on the "Miscellaneous" tab was previously built like this:
+
+```php
+$configVars = [
+    ['title', 'lp_debug_and_caching'],
+    ['check', 'lp_show_debug_info', 'help' => 'lp_show_debug_info_help'],
+    ['int', 'lp_cache_interval', 'postinput' => Lang::$txt['seconds']],
+    ['title', 'lp_compatibility_mode'],
+    [
+        'text',
+        'lp_portal_action',
+        'subtext' => Config::$scripturl . '?action=<strong>' . LP_ACTION . '</strong>'
+    ],
+    [
+        'text',
+        'lp_page_param',
+        'subtext' => Config::$scripturl . '?<strong>' . LP_PAGE_PARAM . '</strong>=page_slug'
+    ],
+    ['title', 'admin_maintenance'],
+    ['check', 'lp_weekly_cleaning']
+];
+```
+
+Now, thanks to `ConfigBuilder` and a set of child classes from `AbstractConfig`, everything looks much more interesting:
+
+```php
+$vars = ConfigBuilder::make()->addVars([
+    TitleConfig::make('lp_debug_and_caching'),
+    CheckConfig::make('lp_show_debug_info')
+        ->setHelp('lp_show_debug_info_help'),
+    IntConfig::make('lp_cache_interval')
+        ->setPostInput(Lang::$txt['seconds']),
+    TitleConfig::make('lp_compatibility_mode'),
+    TextConfig::make('lp_portal_action')
+        ->setSubText(Config::$scripturl . '?action=<strong>' . LP_ACTION . '</strong>'),
+    TextConfig::make('lp_page_param')
+        ->setSubText(Config::$scripturl . '?<strong>' . LP_PAGE_PARAM . '</strong>=page_slug'),
+    TitleConfig::make('admin_maintenance'),
+    CheckConfig::make('lp_weekly_cleaning'),
+]);
+
+$configVars = $vars->build();
+```
+
 More usage examples can be found in the tests, as well as in the [Light Portal](https://github.com/dragomano/Light-Portal/tree/master/src/Sources/LightPortal) project.
