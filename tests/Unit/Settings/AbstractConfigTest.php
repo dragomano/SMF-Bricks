@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-use Tests\Unit\SomeConfig;
+use Tests\Unit\Settings\SomeConfig;
 
 beforeEach(function () {
 	$this->config = SomeConfig::make('foo_bar');
