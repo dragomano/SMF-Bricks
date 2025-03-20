@@ -1,8 +1,8 @@
 <?php declare(strict_types=1);
 
-use Bugo\Bricks\Presenters\TablePresenter;
-use Bugo\Bricks\Renderers\TableRenderer;
 use Bugo\Bricks\Tables\Interfaces\TableBuilderInterface;
+use Bugo\Bricks\Tables\TablePresenter;
+use Bugo\Bricks\Tables\TableRenderer;
 
 it('renders a table correctly', function () {
 	$data = [

@@ -1,10 +1,8 @@
 <?php declare(strict_types=1);
 
-namespace Bugo\Bricks\Renderers;
+namespace Bugo\Bricks\Forms;
 
-use Bugo\Bricks\Forms\Button;
-use Bugo\Bricks\Forms\Field;
-use Bugo\Bricks\Forms\HtmlFieldType;
+use Bugo\Bricks\RendererInterface;
 use InvalidArgumentException;
 use Nette\Utils\Html;
 

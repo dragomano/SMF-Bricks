@@ -1,9 +1,10 @@
 <?php declare(strict_types=1);
 
-namespace Bugo\Bricks\Presenters;
+namespace Bugo\Bricks\Forms;
 
 use Bugo\Bricks\Forms\Interfaces\FormBuilderInterface;
-use Bugo\Bricks\Renderers\RendererInterface;
+use Bugo\Bricks\Forms\Interfaces\FormPresenterInterface;
+use Bugo\Bricks\RendererInterface;
 
 class FormPresenter implements FormPresenterInterface
 {

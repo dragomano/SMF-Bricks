@@ -1,8 +1,8 @@
 <?php declare(strict_types=1);
 
-namespace Bugo\Bricks\Presenters;
+namespace Bugo\Bricks\Tables;
 
-use Bugo\Bricks\Renderers\RendererInterface;
+use Bugo\Bricks\RendererInterface;
 use Bugo\Bricks\Tables\Interfaces\TableBuilderInterface;
 
 use function array_filter;

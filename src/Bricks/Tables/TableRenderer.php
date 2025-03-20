@@ -1,7 +1,8 @@
 <?php declare(strict_types=1);
 
-namespace Bugo\Bricks\Renderers;
+namespace Bugo\Bricks\Tables;
 
+use Bugo\Bricks\RendererInterface;
 use Nette\Utils\Html;
 
 class TableRenderer implements RendererInterface

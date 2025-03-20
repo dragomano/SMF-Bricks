@@ -3,14 +3,14 @@
 use Bugo\Bricks\Forms\CheckboxField;
 use Bugo\Bricks\Forms\EmailField;
 use Bugo\Bricks\Forms\FormBuilder;
+use Bugo\Bricks\Forms\FormPresenter;
+use Bugo\Bricks\Forms\FormRenderer;
 use Bugo\Bricks\Forms\RadioField;
 use Bugo\Bricks\Forms\ResetButton;
 use Bugo\Bricks\Forms\SelectField;
 use Bugo\Bricks\Forms\SubmitButton;
 use Bugo\Bricks\Forms\TextareaField;
 use Bugo\Bricks\Forms\TextField;
-use Bugo\Bricks\Presenters\FormPresenter;
-use Bugo\Bricks\Renderers\FormRenderer;
 
 beforeEach(function () {
 	$_SERVER['REQUEST_METHOD'] = 'POST';

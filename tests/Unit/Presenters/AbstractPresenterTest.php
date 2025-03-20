@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-use Bugo\Bricks\Presenters\AbstractTablePresenter;
+use Bugo\Bricks\Tables\AbstractTablePresenter;
 use Bugo\Bricks\Tables\Interfaces\TableBuilderInterface;
 
 it('renders output correctly', function () {

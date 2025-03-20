@@ -1,8 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Bugo\Bricks\Presenters;
-
-use Bugo\Bricks\Tables\Interfaces\TableBuilderInterface;
+namespace Bugo\Bricks\Tables\Interfaces;
 
 interface TablePresenterInterface
 {
