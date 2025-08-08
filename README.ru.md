@@ -250,4 +250,22 @@ $vars = ConfigBuilder::make()->addVars([
 $configVars = $vars->build();
 ```
 
+## Хлебные крошки
+
+Добавить свои элементы навигации можно с помощью конструктора `BreadcrumbBuilder`:
+
+```php
+$breadcrumbs = BreadcrumbBuilder::make()->addItems([
+    BreadcrumbItem::make('Главная', '/')
+        ->setBefore('🏠'),
+    BreadcrumbItem::make('О сайте', '/about'),
+    BreadcrumbItem::make('Контакты', '/contacts')
+        ->setAfter('✉️'),
+]);
+
+$renderer = new BreadcrumbRenderer();
+$presenter = new BreadcrumbPresenter($renderer);
+$presenter->show($breadcrumbs);
+```
+
 Больше примеров использования можно найти в тестах, а также в проекте [Light Portal](https://github.com/dragomano/Light-Portal/tree/master/src/Sources/LightPortal)

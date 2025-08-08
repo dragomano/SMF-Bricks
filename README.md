@@ -250,4 +250,22 @@ $vars = ConfigBuilder::make()->addVars([
 $configVars = $vars->build();
 ```
 
+## Breadcrumbs
+
+You can add your own navigation elements using `BreadcrumbBuilder`:
+
+```php
+$breadcrumbs = BreadcrumbBuilder::make()->addItems([
+    BreadcrumbItem::make('Home', '/')
+        ->setBefore('🏠'),
+    BreadcrumbItem::make('About', '/about'),
+    BreadcrumbItem::make('Contacts', '/contacts')
+        ->setAfter('✉️'),
+]);
+
+$renderer = new BreadcrumbRenderer();
+$presenter = new BreadcrumbPresenter($renderer);
+$presenter->show($breadcrumbs);
+```
+
 More usage examples can be found in the tests, as well as in the [Light Portal](https://github.com/dragomano/Light-Portal/tree/master/src/Sources/LightPortal) project.
