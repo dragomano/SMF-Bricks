@@ -3,7 +3,6 @@
 namespace Bugo\Bricks\Forms;
 
 use Bugo\Bricks\Forms\Interfaces\FieldInterface;
-
 use Bugo\Bricks\HasShortMethods;
 
 use function array_merge;
