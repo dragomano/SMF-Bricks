@@ -20,7 +20,7 @@
   ],
   "autoload": {
     "psr-4": {
-      "Bugo\\Bricks\\": "src/Bricks/"
+      "Bugo\\Bricks\\": "src"
     }
   },
   "autoload-dev": {
