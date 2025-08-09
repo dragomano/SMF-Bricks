@@ -3,9 +3,9 @@
 namespace Bugo\Bricks\Breadcrumbs;
 
 use Bugo\Bricks\Breadcrumbs\Interfaces\BreadcrumbBuilderInterface;
-
 use InvalidArgumentException;
 
+use function array_map;
 use function get_debug_type;
 use function sprintf;
 
@@ -72,6 +72,6 @@ class BreadcrumbBuilder implements BreadcrumbBuilderInterface
 
 	public function build(): array
 	{
-		return $this->items;
+		return array_map(fn(BreadcrumbItem $item) => $item->toArray() ?: '', $this->items);
 	}
 }
