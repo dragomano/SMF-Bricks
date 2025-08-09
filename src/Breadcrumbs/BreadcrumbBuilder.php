@@ -11,6 +11,7 @@ use function sprintf;
 
 class BreadcrumbBuilder implements BreadcrumbBuilderInterface
 {
+    /** @var array<int, BreadcrumbItem> */
 	private array $items = [];
 
 	protected function __construct() {}
@@ -56,22 +57,70 @@ class BreadcrumbBuilder implements BreadcrumbBuilderInterface
 		return $this;
 	}
 
-	public function remove(int $index): self
+	public function update(int $index, string $key, mixed $value): self
 	{
-		if (isset($this->items[$index])) {
-			unset($this->items[$index]);
+		if (! isset($this->items[$index]))
+			return $this;
+
+		$item = $this->items[$index];
+
+		switch ($key) {
+			case 'name':
+				$this->items[$index] = BreadcrumbItem::make(
+					(string) $value,
+					$item->getUrl(),
+					$item->getBefore(),
+					$item->getAfter()
+				);
+				break;
+
+			case 'url':
+				$this->items[$index] = BreadcrumbItem::make(
+					$item->getName(),
+					$value !== null ? (string) $value : null,
+					$item->getBefore(),
+					$item->getAfter()
+				);
+				break;
+
+			case 'before':
+				$item->setBefore($value !== null ? (string) $value : null);
+				break;
+
+			case 'after':
+				$item->setAfter($value !== null ? (string) $value : null);
+				break;
+
+			default:
+				break;
 		}
 
 		return $this;
 	}
 
-	public function clear(): void
+	public function remove(int $index): self
 	{
-		$this->items = [];
+		if (isset($this->items[$index])) {
+			unset($this->items[$index]);
+
+            $this->items = array_values($this->items);
+		}
+
+		return $this;
+	}
+
+	public function getAll(): array
+	{
+		return $this->items;
+	}
+
+	public function getByIndex(int $index): ?array
+	{
+		return isset($this->items[$index]) ? $this->items[$index]->toArray() : null;
 	}
 
 	public function build(): array
 	{
-		return array_map(fn(BreadcrumbItem $item) => $item->toArray() ?: '', $this->items);
+		return array_map(fn(BreadcrumbItem $item) => $item->toArray() ?: '', $this->getAll());
 	}
 }

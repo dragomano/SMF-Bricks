@@ -3,7 +3,6 @@
 namespace Bugo\Bricks\Breadcrumbs;
 
 use function array_filter;
-use function get_object_vars;
 
 class BreadcrumbItem
 {
@@ -14,7 +13,12 @@ class BreadcrumbItem
 		private ?string $after = null
 	) {}
 
-	public static function make(string $name, ?string $url = null, ?string $before = null, ?string $after = null): static
+	public static function make(
+        string $name,
+        ?string $url = null,
+        ?string $before = null,
+        ?string $after = null
+    ): static
 	{
 		return new static($name, $url, $before, $after);
 	}
@@ -55,8 +59,11 @@ class BreadcrumbItem
 
 	public function toArray(): array
 	{
-		$data = get_object_vars($this);
-
-		return array_filter($data);
+		return array_filter([
+			'name'   => $this->getName(),
+			'url'    => $this->getUrl(),
+			'before' => $this->getBefore(),
+			'after'  => $this->getAfter(),
+		]);
 	}
 }
