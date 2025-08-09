@@ -11,7 +11,7 @@
   </testsuites>
   <source>
     <include>
-      <directory suffix=".php">./src/Bricks</directory>
+      <directory suffix=".php">./src</directory>
     </include>
     <exclude>
       <file>index.php</file>
