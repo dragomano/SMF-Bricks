@@ -11,7 +11,7 @@ use function sprintf;
 
 class BreadcrumbBuilder implements BreadcrumbBuilderInterface
 {
-    /** @var array<int, BreadcrumbItem> */
+	/** @var array<int, BreadcrumbItem> */
 	private array $items = [];
 
 	protected function __construct() {}
@@ -103,7 +103,7 @@ class BreadcrumbBuilder implements BreadcrumbBuilderInterface
 		if (isset($this->items[$index])) {
 			unset($this->items[$index]);
 
-            $this->items = array_values($this->items);
+			$this->items = array_values($this->items);
 		}
 
 		return $this;
