@@ -113,6 +113,12 @@ it('can set form options', function () {
 		->and($formData['target'])->toBe('_blank');
 });
 
+it('can set form style', function () {
+	$this->builder->setStyle('display: none');
+
+	expect($this->builder->build()['style'])->toBe('display: none');
+});
+
 it('can set javascript', function () {
 	$this->builder->setScript('console.log("Hello!")');
 

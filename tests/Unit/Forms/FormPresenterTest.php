@@ -44,6 +44,7 @@ beforeEach(function () {
 		->addButtons([
 			SubmitButton::make(),
 		])
+		->setScript('console.log("Hello!")')
 		->addHiddenFields(['session_id' => '123456']);
 });
 
@@ -54,11 +55,11 @@ it('renders the form correctly', function () {
 
 	expect($output)->toContain('id="form_id"')
 		->and($output)->toContain('Test Form')
-		->and($output)->toContain('name="username"')
-		->and($output)->toContain('name="email"')
-		->and($output)->toContain('name="session_id"')
-		->and($output)->toContain('value="123456"')
-		->and($output)->toContain('name="submit"');
+		->and($output)->toContain('<input name="username" id="username" type="text">')
+		->and($output)->toContain('<input name="email" id="email" type="email">')
+		->and($output)->toContain('<input name="session_id" id="session_id" type="hidden" value="123456">')
+		->and($output)->toContain('<input name="submit" value="Submit" type="submit">')
+		->and($output)->toContain('<script>console.log("Hello!")</script>');
 });
 
 it('renders the form correctly with $_GET query', function () {
@@ -70,11 +71,10 @@ it('renders the form correctly with $_GET query', function () {
 
 	expect($output)->toContain('id="form_id"')
 		->and($output)->toContain('Test Form')
-		->and($output)->toContain('name="username"')
-		->and($output)->toContain('name="email"')
-		->and($output)->toContain('name="session_id"')
-		->and($output)->toContain('value="123456"')
-		->and($output)->toContain('name="submit"');
+		->and($output)->toContain('<input name="username" id="username" type="text">')
+		->and($output)->toContain('<input name="email" id="email" type="email">')
+		->and($output)->toContain('<input name="session_id" id="session_id" type="hidden" value="123456">')
+		->and($output)->toContain('<input name="submit" value="Submit" type="submit">');
 });
 
 it('renders the form without buttons', function () {

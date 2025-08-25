@@ -34,6 +34,7 @@ enum HtmlFieldType: string
 			self::DATE->value,
 			self::EMAIL->value,
 			self::FILE->value,
+			self::HIDDEN->value,
 			self::NUMBER->value,
 			self::PASSWORD->value,
 			self::RADIO->value,

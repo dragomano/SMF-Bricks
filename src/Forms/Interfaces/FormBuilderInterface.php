@@ -10,6 +10,8 @@ interface FormBuilderInterface extends BuilderInterface
 {
 	public function setClass(string $class): self;
 
+	public function setStyle(string $style): self;
+
 	public function withParams(
 		?string $action = null,
 		?string $method = null,

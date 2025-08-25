@@ -11,7 +11,7 @@ class SubmitButton extends Button
 		$this->setType(HtmlFieldType::SUBMIT->value);
 	}
 
-	public static function make(string $name = 'submit', string $value = 'Save'): static
+	public static function make(string $name = 'submit', string $value = 'Submit'): static
 	{
 		return new static($name, $value);
 	}

@@ -20,12 +20,17 @@ class FormRenderer implements RendererInterface
 		$this->prepareForm($form, $data);
 
 		echo $form;
+
+		if (! empty($data['script'])) {
+			echo Html::el('script')->addHtml($data['script']);
+		}
 	}
 
 	private function prepareForm(Html $form, array $data): void
 	{
 		$form
 			->id($data['id'])
+            ->name($data['name'] ?? $data['id'])
 			->action($data['action'] ?? null)
 			->method($data['method'] ?? null)
 			->enctype($data['enctype'] ?? null)
@@ -113,6 +118,10 @@ class FormRenderer implements RendererInterface
 
 		if (in_array($field['type'], [HtmlFieldType::SELECT->value, HtmlFieldType::TEXTAREA->value])) {
 			$result->type(null);
+		}
+
+		if ($field['type'] === HtmlFieldType::HIDDEN->value) {
+			return $result;
 		}
 
 		return Html::el('dl', ['class' => 'settings'])

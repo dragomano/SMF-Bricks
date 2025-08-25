@@ -22,14 +22,14 @@ class FormBuilder implements FormBuilderInterface
 
 	private array $attributes = [];
 
-	protected function __construct(string $id, string $title)
+	protected function __construct(string $id, string $title = '')
 	{
 		$this->setId($id);
 		$this->setTitle($title);
 		$this->setMethod();
 	}
 
-	public static function make(string $id, string $title): static
+	public static function make(string $id, string $title = ''): static
 	{
 		return new static($id, $title);
 	}
@@ -72,6 +72,13 @@ class FormBuilder implements FormBuilderInterface
 	public function setClass(string $class): self
 	{
 		$this->attributes['class'] = $class;
+
+		return $this;
+	}
+
+	public function setStyle(string $style): self
+	{
+		$this->attributes['style'] = $style;
 
 		return $this;
 	}
