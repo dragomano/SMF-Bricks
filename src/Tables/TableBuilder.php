@@ -3,6 +3,8 @@
 namespace Bugo\Bricks\Tables;
 
 use Bugo\Bricks\HasShortMethods;
+use Bugo\Bricks\Tables\Interfaces\ColumnInterface;
+use Bugo\Bricks\Tables\Interfaces\RowInterface;
 use Bugo\Bricks\Tables\Interfaces\TableBuilderInterface;
 use InvalidArgumentException;
 
@@ -148,16 +150,16 @@ class TableBuilder implements TableBuilderInterface
 	}
 
 	/**
-	 * @param array<Column> $columns
+	 * @param array<ColumnInterface> $columns
 	 */
 	public function addColumns(array $columns, ?string $class = null, ?string $style = null): self
 	{
 		foreach ($columns as $column) {
-			if (! $column instanceof Column) {
+			if (! $column instanceof ColumnInterface) {
 				throw new InvalidArgumentException(
 					sprintf(
 						'Column must be instance of %s, %s given',
-						Column::class,
+						ColumnInterface::class,
 						get_debug_type($column)
 					)
 				);
@@ -171,7 +173,7 @@ class TableBuilder implements TableBuilderInterface
 		return $this;
 	}
 
-	public function addColumn(Column $column): self
+	public function addColumn(ColumnInterface $column): self
 	{
 		$this->attributes['columns'][$column->getName()] = $column->toArray();
 
@@ -216,16 +218,16 @@ class TableBuilder implements TableBuilderInterface
 	}
 
 	/**
-	 * @param array<Row> $rows
+	 * @param array<RowInterface> $rows
 	 */
 	public function addRows(array $rows, ?string $class = null, ?string $style = null): self
 	{
 		foreach ($rows as $row) {
-			if (! $row instanceof Row) {
+			if (! $row instanceof RowInterface) {
 				throw new InvalidArgumentException(
 					sprintf(
 						'Row must be instance of %s, %s given',
-						Row::class,
+						RowInterface::class,
 						get_debug_type($row)
 					)
 				);
@@ -239,7 +241,7 @@ class TableBuilder implements TableBuilderInterface
 		return $this;
 	}
 
-	public function addRow(Row $row, ?string $class = null): self
+	public function addRow(RowInterface $row, ?string $class = null): self
 	{
 		$class && $row->setClass($class);
 

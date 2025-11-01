@@ -3,6 +3,7 @@
 namespace Bugo\Bricks\Breadcrumbs;
 
 use Bugo\Bricks\Breadcrumbs\Interfaces\BreadcrumbBuilderInterface;
+use Bugo\Bricks\Breadcrumbs\Interfaces\BreadcrumbItemInterface;
 use InvalidArgumentException;
 
 use function array_map;
@@ -11,7 +12,7 @@ use function sprintf;
 
 class BreadcrumbBuilder implements BreadcrumbBuilderInterface
 {
-	/** @var array<int, BreadcrumbItem> */
+	/** @var array<int, BreadcrumbItemInterface> */
 	private array $items = [];
 
 	protected function __construct() {}
@@ -28,7 +29,7 @@ class BreadcrumbBuilder implements BreadcrumbBuilderInterface
 		return $this;
 	}
 
-	public function addItem(BreadcrumbItem $item): self
+	public function addItem(BreadcrumbItemInterface $item): self
 	{
 		$this->items[] = $item;
 
@@ -36,16 +37,16 @@ class BreadcrumbBuilder implements BreadcrumbBuilderInterface
 	}
 
 	/**
-	 * @param array<BreadcrumbItem> $items
+	 * @param array<BreadcrumbItemInterface> $items
 	 */
 	public function addItems(array $items): self
 	{
 		foreach ($items as $item) {
-			if (! $item instanceof BreadcrumbItem) {
+			if (! $item instanceof BreadcrumbItemInterface) {
 				throw new InvalidArgumentException(
 					sprintf(
 						'Item must be instance of %s, %s given',
-						BreadcrumbItem::class,
+						BreadcrumbItemInterface::class,
 						get_debug_type($item)
 					)
 				);
@@ -121,6 +122,6 @@ class BreadcrumbBuilder implements BreadcrumbBuilderInterface
 
 	public function build(): array
 	{
-		return array_map(fn(BreadcrumbItem $item) => $item->toArray() ?: '', $this->getAll());
+		return array_map(fn(BreadcrumbItemInterface $item) => $item->toArray() ?: '', $this->getAll());
 	}
 }

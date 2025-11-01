@@ -56,16 +56,16 @@ abstract class AbstractConfig implements ConfigInterface
 		return $this;
 	}
 
-	public function setPreInput(string $preinput): self
+	public function setPreInput(string $input): self
 	{
-		$this->params['preinput'] = $preinput;
+		$this->params['preinput'] = $input;
 
 		return $this;
 	}
 
-	public function setPostInput(string $postinput): self
+	public function setPostInput(string $input): self
 	{
-		$this->params['postinput'] = $postinput;
+		$this->params['postinput'] = $input;
 
 		return $this;
 	}

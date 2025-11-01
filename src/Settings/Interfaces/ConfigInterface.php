@@ -14,9 +14,9 @@ interface ConfigInterface
 
 	public function setHelp(string $help): self;
 
-	public function setPreInput(string $preinput): self;
+	public function setPreInput(string $input): self;
 
-	public function setPostInput(string $postinput): self;
+	public function setPostInput(string $input): self;
 
 	public function setSubText(string $subtext): self;
 

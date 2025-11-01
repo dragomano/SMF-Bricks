@@ -2,6 +2,8 @@
 
 namespace Bugo\Bricks\Forms;
 
+use Bugo\Bricks\Forms\Interfaces\ButtonInterface;
+use Bugo\Bricks\Forms\Interfaces\FieldInterface;
 use Bugo\Bricks\Forms\Interfaces\FormBuilderInterface;
 use Bugo\Bricks\HasShortMethods;
 use InvalidArgumentException;
@@ -121,17 +123,17 @@ class FormBuilder implements FormBuilderInterface
 	}
 
 	/**
-	 * @param array<Field> $fields
+	 * @param array<FieldInterface> $fields
 	 */
 	public function addFields(array $fields, ?string $containerClass = null, ?string $fieldClass = null): self
 	{
 		$children = [];
 		foreach ($fields as $field) {
-			if (! $field instanceof Field) {
+			if (! $field instanceof FieldInterface) {
 				throw new InvalidArgumentException(
 					sprintf(
 						'Field must be instance of %s, %s given',
-						Field::class,
+						FieldInterface::class,
 						get_debug_type($field)
 					)
 				);
@@ -156,7 +158,7 @@ class FormBuilder implements FormBuilderInterface
 		return $this;
 	}
 
-	public function addField(Field $field): self
+	public function addField(FieldInterface $field): self
 	{
 		$this->attributes['fields'][$field->getName()] = $field;
 
@@ -171,17 +173,17 @@ class FormBuilder implements FormBuilderInterface
 	}
 
 	/**
-	 * @param array<Button> $buttons
+	 * @param array<ButtonInterface> $buttons
 	 */
 	public function addButtons(array $buttons, ?string $containerClass = null, ?string $buttonClass = null): self
 	{
 		$children = [];
 		foreach ($buttons as $button) {
-			if (! $button instanceof Button) {
+			if (! $button instanceof ButtonInterface) {
 				throw new InvalidArgumentException(
 					sprintf(
 						'Button must be instance of %s, %s given',
-						Button::class,
+						ButtonInterface::class,
 						get_debug_type($button)
 					)
 				);
@@ -206,7 +208,7 @@ class FormBuilder implements FormBuilderInterface
 		return $this;
 	}
 
-	public function addButton(Button $button): self
+	public function addButton(ButtonInterface $button): self
 	{
 		$this->attributes['buttons'][$button->getName()] = $button;
 

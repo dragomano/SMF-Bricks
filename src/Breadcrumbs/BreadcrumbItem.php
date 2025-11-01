@@ -2,9 +2,11 @@
 
 namespace Bugo\Bricks\Breadcrumbs;
 
+use Bugo\Bricks\Breadcrumbs\Interfaces\BreadcrumbItemInterface;
+
 use function array_filter;
 
-class BreadcrumbItem
+class BreadcrumbItem implements BreadcrumbItemInterface
 {
 	protected function __construct(
 		private readonly string $name,
