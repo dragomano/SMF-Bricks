@@ -41,42 +41,42 @@ class TableBuilder implements TableBuilderInterface
 		return new static($id, $title);
 	}
 
-	public function setId(string $id): self
+	public function setId(string $id): static
 	{
 		$this->attributes['id'] = $id;
 
 		return $this;
 	}
 
-	public function setName(string $name): self
+	public function setName(string $name): static
 	{
 		$this->attributes['form']['name'] = $name;
 
 		return $this;
 	}
 
-	public function setTitle(string $title): self
+	public function setTitle(string $title): static
 	{
 		$this->attributes['title'] = $title;
 
 		return $this;
 	}
 
-	public function paginate(int $itemsPerPage = 15): self
+	public function paginate(int $itemsPerPage = 15): static
 	{
 		$this->attributes['items_per_page'] = $itemsPerPage;
 
 		return $this;
 	}
 
-	public function setNoItemsLabel(string $label): self
+	public function setNoItemsLabel(string $label): static
 	{
 		$this->attributes['no_items_label'] = $label;
 
 		return $this;
 	}
 
-	public function setFormAction(string $action): self
+	public function setFormAction(string $action): static
 	{
 		$url = filter_var($action, FILTER_VALIDATE_URL);
 
@@ -91,7 +91,7 @@ class TableBuilder implements TableBuilderInterface
 		return $this;
 	}
 
-	public function setDefaultSortColumn(string $column): self
+	public function setDefaultSortColumn(string $column): static
 	{
 		$this->attributes['default_sort_col'] = $column;
 
@@ -103,7 +103,7 @@ class TableBuilder implements TableBuilderInterface
 		?string $noItemsLabel = null,
 		?string $action = null,
 		?string $defaultSortColumn = null
-	): self
+	): static
 	{
 		if ($perPage !== null) {
 			$this->paginate($perPage);
@@ -124,7 +124,7 @@ class TableBuilder implements TableBuilderInterface
 		return $this;
 	}
 
-	public function setItems(array|callable $items, array $params = []): self
+	public function setItems(array|callable $items, array $params = []): static
 	{
 		$type = match (true) {
 			is_callable($items) => 'callable',
@@ -136,7 +136,7 @@ class TableBuilder implements TableBuilderInterface
 		return $this;
 	}
 
-	public function setCount(mixed $count, array $params = []): self
+	public function setCount(mixed $count, array $params = []): static
 	{
 		$type = match (true) {
 			is_callable($count) => 'callable',
@@ -152,7 +152,7 @@ class TableBuilder implements TableBuilderInterface
 	/**
 	 * @param array<ColumnInterface> $columns
 	 */
-	public function addColumns(array $columns, ?string $class = null, ?string $style = null): self
+	public function addColumns(array $columns, ?string $class = null, ?string $style = null): static
 	{
 		foreach ($columns as $column) {
 			if (! $column instanceof ColumnInterface) {
@@ -173,28 +173,28 @@ class TableBuilder implements TableBuilderInterface
 		return $this;
 	}
 
-	public function addColumn(ColumnInterface $column): self
+	public function addColumn(ColumnInterface $column): static
 	{
 		$this->attributes['columns'][$column->getName()] = $column->toArray();
 
 		return $this;
 	}
 
-	public function removeColumn(string $name): self
+	public function removeColumn(string $name): static
 	{
 		unset($this->attributes['columns'][$name]);
 
 		return $this;
 	}
 
-	public function addFormData(array $data): self
+	public function addFormData(array $data): static
 	{
 		$this->attributes['form'] = array_merge($this->attributes['form'] ?? [], $data);
 
 		return $this;
 	}
 
-	public function addHiddenFields(array $fields): self
+	public function addHiddenFields(array $fields): static
 	{
 		$this->attributes['form']['hidden_fields'] = array_merge(
 			$this->attributes['form']['hidden_fields'] ?? [], $fields
@@ -203,14 +203,14 @@ class TableBuilder implements TableBuilderInterface
 		return $this;
 	}
 
-	public function setScript(string $script): self
+	public function setScript(string $script): static
 	{
 		$this->attributes['javascript'] = $script;
 
 		return $this;
 	}
 
-	public function removeScript(): self
+	public function removeScript(): static
 	{
 		unset($this->attributes['javascript']);
 
@@ -220,7 +220,7 @@ class TableBuilder implements TableBuilderInterface
 	/**
 	 * @param array<RowInterface> $rows
 	 */
-	public function addRows(array $rows, ?string $class = null, ?string $style = null): self
+	public function addRows(array $rows, ?string $class = null, ?string $style = null): static
 	{
 		foreach ($rows as $row) {
 			if (! $row instanceof RowInterface) {
@@ -241,7 +241,7 @@ class TableBuilder implements TableBuilderInterface
 		return $this;
 	}
 
-	public function addRow(RowInterface $row, ?string $class = null): self
+	public function addRow(RowInterface $row, ?string $class = null): static
 	{
 		$class && $row->setClass($class);
 

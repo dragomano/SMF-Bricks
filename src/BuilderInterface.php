@@ -6,11 +6,11 @@ interface BuilderInterface
 {
 	public static function make(string $id, string $title): static;
 
-	public function setId(string $id): self;
+	public function setId(string $id): static;
 
-	public function setName(string $name): self;
+	public function setName(string $name): static;
 
-	public function setTitle(string $title): self;
+	public function setTitle(string $title): static;
 
 	public function getId(): string;
 

@@ -6,9 +6,9 @@ use Bugo\Bricks\Forms\Interfaces\FormBuilderInterface;
 use Bugo\Bricks\Forms\Interfaces\FormPresenterInterface;
 use Bugo\Bricks\RendererInterface;
 
-class FormPresenter implements FormPresenterInterface
+readonly class FormPresenter implements FormPresenterInterface
 {
-	public function __construct(private readonly RendererInterface $renderer) {}
+	public function __construct(private RendererInterface $renderer) {}
 
 	public function show(FormBuilderInterface $builder): void
 	{

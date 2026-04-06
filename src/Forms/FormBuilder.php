@@ -36,56 +36,56 @@ class FormBuilder implements FormBuilderInterface
 		return new static($id, $title);
 	}
 
-	public function setId(string $id): self
+	public function setId(string $id): static
 	{
 		$this->attributes['id'] = $id;
 
 		return $this;
 	}
 
-	public function setName(string $name): self
+	public function setName(string $name): static
 	{
 		$this->attributes['name'] = $name;
 
 		return $this;
 	}
 
-	public function setTitle(string $title): self
+	public function setTitle(string $title): static
 	{
 		$this->attributes['title'] = $title;
 
 		return $this;
 	}
 
-	public function setAction(string $action): self
+	public function setAction(string $action): static
 	{
 		$this->attributes['action'] = $action;
 
 		return $this;
 	}
 
-	public function setMethod(string $method = 'post'): self
+	public function setMethod(string $method = 'post'): static
 	{
 		$this->attributes['method'] = $method;
 
 		return $this;
 	}
 
-	public function setClass(string $class): self
+	public function setClass(string $class): static
 	{
 		$this->attributes['class'] = $class;
 
 		return $this;
 	}
 
-	public function setStyle(string $style): self
+	public function setStyle(string $style): static
 	{
 		$this->attributes['style'] = $style;
 
 		return $this;
 	}
 
-	public function setTarget(string $target): self
+	public function setTarget(string $target): static
 	{
 		$this->attributes['target'] = $target;
 
@@ -98,7 +98,7 @@ class FormBuilder implements FormBuilderInterface
 		?bool $multipart = null,
 		?string $class = null,
 		?string $target = null
-	): self {
+	): static {
 		if ($action) {
 			$this->setAction($action);
 		}
@@ -125,7 +125,7 @@ class FormBuilder implements FormBuilderInterface
 	/**
 	 * @param array<FieldInterface> $fields
 	 */
-	public function addFields(array $fields, ?string $containerClass = null, ?string $fieldClass = null): self
+	public function addFields(array $fields, ?string $containerClass = null, ?string $fieldClass = null): static
 	{
 		$children = [];
 		foreach ($fields as $field) {
@@ -158,14 +158,14 @@ class FormBuilder implements FormBuilderInterface
 		return $this;
 	}
 
-	public function addField(FieldInterface $field): self
+	public function addField(FieldInterface $field): static
 	{
 		$this->attributes['fields'][$field->getName()] = $field;
 
 		return $this;
 	}
 
-	public function removeField(string $name): self
+	public function removeField(string $name): static
 	{
 		unset($this->attributes['fields'][$name]);
 
@@ -175,7 +175,7 @@ class FormBuilder implements FormBuilderInterface
 	/**
 	 * @param array<ButtonInterface> $buttons
 	 */
-	public function addButtons(array $buttons, ?string $containerClass = null, ?string $buttonClass = null): self
+	public function addButtons(array $buttons, ?string $containerClass = null, ?string $buttonClass = null): static
 	{
 		$children = [];
 		foreach ($buttons as $button) {
@@ -208,42 +208,42 @@ class FormBuilder implements FormBuilderInterface
 		return $this;
 	}
 
-	public function addButton(ButtonInterface $button): self
+	public function addButton(ButtonInterface $button): static
 	{
 		$this->attributes['buttons'][$button->getName()] = $button;
 
 		return $this;
 	}
 
-	public function removeButton(string $name): self
+	public function removeButton(string $name): static
 	{
 		unset($this->attributes['buttons'][$name]);
 
 		return $this;
 	}
 
-	public function setScript(string $script): self
+	public function setScript(string $script): static
 	{
 		$this->attributes['script'] = $script;
 
 		return $this;
 	}
 
-	public function removeScript(): self
+	public function removeScript(): static
 	{
 		unset($this->attributes['script']);
 
 		return $this;
 	}
 
-	public function setBodyClass(string $class): self
+	public function setBodyClass(string $class): static
 	{
 		$this->attributes['body_class'] = $class;
 
 		return $this;
 	}
 
-	public function addHiddenFields(array $fields): self
+	public function addHiddenFields(array $fields): static
 	{
 		foreach ($fields as $name => $value) {
 			$this->addField(HiddenField::make($name)->setValue($value));
