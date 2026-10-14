@@ -95,6 +95,8 @@ $presenter = new TablePresenter($renderer);
 $presenter->show($builder);
 ```
 
+> **Примечание:** встроенный `TableRenderer` отображает готовый массив (`title`, `headers`, `rows`, `javascript`). Вывод конструктора предназначен для `createList()` в SMF — см. раздел [Совместимость](#совместимость).
+
 Вместо универсального метода `withParams` есть также более точечные: `paginate`, `setNoItemsLabel`, `setFormAction` и `setDefaultSortColumn`.
 
 Столбцы формируются с помощью `Column::make()`:
@@ -267,5 +269,18 @@ $renderer = new BreadcrumbRenderer();
 $presenter = new BreadcrumbPresenter($renderer);
 $presenter->show($breadcrumbs);
 ```
+
+## Совместимость
+
+Пакет является зависимостью [Light Portal](https://github.com/dragomano/Light-Portal), поэтому его публичный API и структура результатов `build()`/`toArray()` — это контракт:
+
+- `TableBuilder::build()` — массив настроек SMF `createList()` (`columns`, `default_sort_col`, `get_items`, `get_count`, `items_per_page`, `form`, `additional_rows`, `javascript` и другие); презентер лишь применяет `excludeColumns()`, поэтому рендерер подключается свой;
+- `*Config::toArray()` — настройка SMF: тип в элементе `0`, имя в `1`, опции в `2`, плюс ключи `tab`, `attributes`, `callback`, `placeholder`, `min`, `max`, `step`;
+- `BreadcrumbBuilder::build()` — массив массивов с ключами `name`, `url`, `before` и `after`;
+- `RowPosition::name()` — значения используются как ключи позиционирования `additional_rows` в SMF;
+- `RendererInterface` — реализуется сторонними рендерерами, поэтому в нём намеренно один метод `render(array $data): void`;
+- `make()` использует позднее статическое связывание (`new static`), а `TableBuilder::__construct()` остаётся `protected`, чтобы подклассы (например, `PortalTableBuilder`) продолжали работать.
+
+Изменения только аддитивные: ключи, имена методов и параметров (их могут передавать именованными аргументами) и значения перечислений не переименовываются. Ломающие изменения выходят в `0.10+` и требуют сначала обновить потребителя.
 
 Больше примеров использования можно найти в тестах, а также в проекте [Light Portal](https://github.com/dragomano/Light-Portal/tree/master/src/Sources/LightPortal)

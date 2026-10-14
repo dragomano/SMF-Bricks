@@ -95,6 +95,8 @@ $presenter = new TablePresenter($renderer);
 $presenter->show($builder);
 ```
 
+> **Note:** the bundled `TableRenderer` renders a ready-made array (`title`, `headers`, `rows`, `javascript`). Builder output is intended for SMF's `createList()` — see the [Compatibility](#compatibility) section.
+
 Instead of the universal method `withParams`, there are also more specific ones: `paginate`, `setNoItemsLabel`, `setFormAction`, and `setDefaultSortColumn`.
 
 Columns are created using `Column::make()`:
@@ -267,5 +269,18 @@ $renderer = new BreadcrumbRenderer();
 $presenter = new BreadcrumbPresenter($renderer);
 $presenter->show($breadcrumbs);
 ```
+
+## Compatibility
+
+The package is a dependency of [Light Portal](https://github.com/dragomano/Light-Portal), so its public API and the structure of `build()`/`toArray()` results are treated as a contract:
+
+- `TableBuilder::build()` — an array of SMF `createList()` options (`columns`, `default_sort_col`, `get_items`, `get_count`, `items_per_page`, `form`, `additional_rows`, `javascript` and others); the presenter only applies `excludeColumns()`, so plug in your own renderer;
+- `*Config::toArray()` — an SMF config var: the type at index `0`, the name at index `1`, options at index `2`, plus keys such as `tab`, `attributes`, `callback`, `placeholder`, `min`, `max`, `step`;
+- `BreadcrumbBuilder::build()` — an array of arrays with the `name`, `url`, `before` and `after` keys;
+- `RowPosition::name()` — its values are used as SMF `additional_rows` position keys;
+- `RendererInterface` — implemented by third-party renderers, so it intentionally has a single `render(array $data): void` method;
+- `make()` uses late static binding (`new static`), and `TableBuilder::__construct()` stays `protected`, so subclasses (like `PortalTableBuilder`) keep working.
+
+Changes are additive: keys, method names, parameter names (they may be passed as named arguments) and enum values are not renamed. Breaking changes are released as `0.10+` and require updating the consumer first.
 
 More usage examples can be found in the tests, as well as in the [Light Portal](https://github.com/dragomano/Light-Portal/tree/master/src/Sources/LightPortal) project.
