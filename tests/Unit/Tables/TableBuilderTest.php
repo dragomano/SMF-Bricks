@@ -139,3 +139,30 @@ it('can return id', function () {
 it('can return title', function () {
 	expect($this->builder->getTitle())->toBe('Test Table');
 });
+
+it('paginates array items by start and limit', function () {
+	$items = [['id' => 1], ['id' => 2], ['id' => 3]];
+
+	$this->builder->paginate(1)->setItems($items);
+
+	$getItems = $this->builder->build()['get_items']['function'];
+
+	expect($getItems(0, 1, 'id DESC'))->toBe([['id' => 1]])
+		->and($getItems(1, 1, 'id DESC'))->toBe([['id' => 2]])
+		->and($getItems(2, 1, 'id DESC'))->toBe([['id' => 3]]);
+});
+
+it('counts array items', function () {
+	$this->builder->setCount([1, 2, 3]);
+
+	$getCount = $this->builder->build()['get_count']['function'];
+
+	expect($getCount())->toBe(3);
+});
+
+it('accepts a relative form action', function () {
+	$this->builder->setFormAction('index.php?action=admin');
+
+	expect($this->builder->build()['base_href'])->toBe('index.php?action=admin')
+		->and($this->builder->build()['form']['href'])->toBe('index.php?action=admin');
+});

@@ -10,7 +10,10 @@ use function ucfirst;
 
 trait HasShortMethods
 {
-	public function __call(string $name, array $arguments)
+	/**
+	 * @param array<int, mixed> $arguments
+	 */
+	public function __call(string $name, array $arguments): mixed
 	{
 		$methodName = 'set' . ucfirst($name);
 

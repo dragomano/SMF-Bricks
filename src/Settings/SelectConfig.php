@@ -16,7 +16,7 @@ class SelectConfig extends AbstractConfig
 	public function extendData(): array
 	{
 		return [
-			2 => $this->params['options'],
+			2 => $this->params['options'] ?? [],
 		];
 	}
 }

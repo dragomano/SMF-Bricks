@@ -8,6 +8,10 @@ use Bugo\Bricks\Forms\Interfaces\FormBuilderInterface;
 use Bugo\Bricks\HasShortMethods;
 use InvalidArgumentException;
 
+use function array_filter;
+use function array_values;
+use function is_array;
+
 /**
  * @method self id(string $id)
  * @method self name(string $name)
@@ -169,6 +173,17 @@ class FormBuilder implements FormBuilderInterface
 	{
 		unset($this->attributes['fields'][$name]);
 
+		foreach ($this->attributes['fields'] ?? [] as $key => $container) {
+			if (! is_array($container) || empty($container['fields']) || ! is_array($container['fields'])) {
+				continue;
+			}
+
+			$this->attributes['fields'][$key]['fields'] = array_values(array_filter(
+				$container['fields'],
+				static fn($field) => ! $field instanceof FieldInterface || $field->getName() !== $name
+			));
+		}
+
 		return $this;
 	}
 
@@ -218,6 +233,17 @@ class FormBuilder implements FormBuilderInterface
 	public function removeButton(string $name): static
 	{
 		unset($this->attributes['buttons'][$name]);
+
+		foreach ($this->attributes['buttons'] ?? [] as $key => $container) {
+			if (! is_array($container) || empty($container['buttons']) || ! is_array($container['buttons'])) {
+				continue;
+			}
+
+			$this->attributes['buttons'][$key]['buttons'] = array_values(array_filter(
+				$container['buttons'],
+				static fn($button) => ! $button instanceof ButtonInterface || $button->getName() !== $name
+			));
+		}
 
 		return $this;
 	}

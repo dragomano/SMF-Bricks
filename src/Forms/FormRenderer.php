@@ -2,12 +2,17 @@
 
 namespace Bugo\Bricks\Forms;
 
+use Bugo\Bricks\Forms\Interfaces\ButtonInterface;
+use Bugo\Bricks\Forms\Interfaces\FieldInterface;
 use Bugo\Bricks\RendererInterface;
 use InvalidArgumentException;
 use Nette\Utils\Html;
 
 use function array_filter;
+use function get_debug_type;
 use function in_array;
+use function is_array;
+use function sprintf;
 
 use const ARRAY_FILTER_USE_KEY;
 
@@ -34,7 +39,9 @@ class FormRenderer implements RendererInterface
 			->action($data['action'] ?? null)
 			->method($data['method'] ?? null)
 			->enctype($data['enctype'] ?? null)
-			->class($data['class'] ?? null);
+			->class($data['class'] ?? null)
+			->style($data['style'] ?? null)
+			->target($data['target'] ?? null);
 
 		$data['title'] && $form->addHtml(
 			Html::el('div', ['class' => 'cat_bar'])
@@ -53,14 +60,22 @@ class FormRenderer implements RendererInterface
 
 	private function prepareFields(Html $body, array $data): void
 	{
-		foreach ($data['fields'] as $field) {
-			if (! $field instanceof Field) {
-				$body->addHtml($this->renderContainer('field', $field['class'], $field['fields']));
+		foreach ($data['fields'] ?? [] as $field) {
+			if ($field instanceof FieldInterface) {
+				$body->addHtml($this->renderField($field->toArray()));
 
 				continue;
 			}
 
-			$body->addHtml($this->renderField($field->toArray()));
+			if (! is_array($field) || ! isset($field['fields']) || ! is_array($field['fields'])) {
+				throw new InvalidArgumentException(sprintf(
+					'Field must be an instance of %s or a container array with the "fields" key, %s given',
+					FieldInterface::class,
+					get_debug_type($field)
+				));
+			}
+
+			$body->addHtml($this->renderContainer('field', $field['class'] ?? '', $field['fields']));
 		}
 	}
 
@@ -70,13 +85,21 @@ class FormRenderer implements RendererInterface
 			return;
 
 		foreach ($data['buttons'] as $button) {
-			if (! $button instanceof Button) {
-				$body->addHtml($this->renderContainer('button', $button['class'], $button['buttons']));
+			if ($button instanceof ButtonInterface) {
+				$body->addHtml($this->renderButton($button->toArray()));
 
 				continue;
 			}
 
-			$body->addHtml($this->renderButton($button->toArray()));
+			if (! is_array($button) || ! isset($button['buttons']) || ! is_array($button['buttons'])) {
+				throw new InvalidArgumentException(sprintf(
+					'Button must be an instance of %s or a container array with the "buttons" key, %s given',
+					ButtonInterface::class,
+					get_debug_type($button)
+				));
+			}
+
+			$body->addHtml($this->renderContainer('button', $button['class'] ?? '', $button['buttons']));
 		}
 	}
 
@@ -85,10 +108,16 @@ class FormRenderer implements RendererInterface
 		$container = Html::el('div', ['class' => $class]);
 
 		foreach ($elements as $element) {
-			if ($type === 'field') {
+			if ($type === 'field' && $element instanceof FieldInterface) {
 				$container->addHtml($this->renderField($element->toArray()));
-			} elseif ($type === 'button') {
+			} elseif ($type === 'button' && $element instanceof ButtonInterface) {
 				$container->addHtml($this->renderButton($element->toArray()));
+			} else {
+				throw new InvalidArgumentException(sprintf(
+					'Container element must be an instance of %s, %s given',
+					$type === 'field' ? FieldInterface::class : ButtonInterface::class,
+					get_debug_type($element)
+				));
 			}
 		}
 
@@ -97,7 +126,11 @@ class FormRenderer implements RendererInterface
 
 	private function renderField(array $field): Html
 	{
-		$text = $field['label'];
+		if (! isset($field['type'], $field['name'])) {
+			throw new InvalidArgumentException('The field data must contain the "type" and "name" keys');
+		}
+
+		$text = $field['label'] ?? '';
 
 		unset($field['label']);
 
@@ -124,20 +157,29 @@ class FormRenderer implements RendererInterface
 			return $result;
 		}
 
+		$label = Html::el('label', $text)->class('strong');
+
+		// A group of radio buttons has no single control to point at,
+		// each option is wrapped into its own label instead.
+		if ($field['type'] !== HtmlFieldType::RADIO->value) {
+			$label->for($field['id'] ?? $field['name']);
+		}
+
 		return Html::el('dl', ['class' => 'settings'])
-			->addHtml(Html::el('dt')
-				->addHtml(Html::el('label', $text)
-					->for($field['name'])
-					->class('strong')))
+			->addHtml(Html::el('dt')->addHtml($label))
 			->addHtml(Html::el('dd')->addHtml($result));
 	}
 
 	private function renderButton(array $button): Html
 	{
+		if (! isset($button['name'])) {
+			throw new InvalidArgumentException('The button data must contain the "name" key');
+		}
+
 		return Html::el('input')
 			->id($button['id'] ?? null)
 			->name($button['name'])
-			->value($button['value'])
+			->value($button['value'] ?? null)
 			->class($button['class'] ?? null)
 			->style($button['style'] ?? null)
 			->type($button['type'] ?? null);
@@ -175,11 +217,15 @@ class FormRenderer implements RendererInterface
 			$selected = $field['selected'] ?? false;
 
 			$result->addHtml(
-				Html::el('input', $value)
-					->name($field['name'])
-					->value($key)
-					->type(HtmlFieldType::RADIO->value)
-					->checked($selected === $key)
+				Html::el('label')
+					->addHtml(
+						Html::el('input')
+							->name($field['name'])
+							->value($key)
+							->type(HtmlFieldType::RADIO->value)
+							->checked($selected === $key)
+					)
+					->addText(' ' . $value)
 			);
 		}
 

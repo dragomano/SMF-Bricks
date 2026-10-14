@@ -46,7 +46,7 @@ class TableRenderer implements RendererInterface
 					$td = Html::el('td');
 					$td->class($cell['class'] ?? null);
 					$td->style($cell['style'] ?? null);
-					$td->setHtml($cell['value']);
+					$td->setHtml($cell['value'] ?? '');
 
 					$tr->addHtml($td);
 				}

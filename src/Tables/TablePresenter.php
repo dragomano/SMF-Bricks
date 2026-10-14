@@ -20,7 +20,7 @@ class TablePresenter extends AbstractTablePresenter
 
 		$data['columns'] = array_filter(
 			$data['columns'] ?? [],
-			fn($column) => ! in_array($column, static::$excludeColumns),
+			fn($column) => ! in_array($column, $this->excludeColumns, true),
 			ARRAY_FILTER_USE_KEY
 		);
 

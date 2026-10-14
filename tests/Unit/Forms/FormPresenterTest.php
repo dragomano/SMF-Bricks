@@ -139,5 +139,5 @@ it('renders the form correctly with filled $_POST data', function () {
 		->and($output)->toContain('<input name="check" id="check" type="checkbox" checked value="on">')
 		->and($output)->toContain('<textarea name="textarea" id="textarea">foo bar</textarea>')
 		->and($output)->toContain('<select name="select" id="select"><option value="no" selected>No</option><option value="yes">Yes</option></select>')
-		->and($output)->toContain('<input name="radio" value="no" type="radio"><input name="radio" value="yes" type="radio" checked>');
+		->and($output)->toContain('<label><input name="radio" value="no" type="radio"> No</label><label><input name="radio" value="yes" type="radio" checked> Yes</label>');
 });

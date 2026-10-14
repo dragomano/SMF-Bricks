@@ -4,8 +4,10 @@ namespace Bugo\Bricks\Forms;
 
 use Bugo\Bricks\Forms\Interfaces\ButtonInterface;
 use Bugo\Bricks\HasShortMethods;
+use Stringable;
 
 use function array_merge;
+use function is_scalar;
 
 /**
  * @method self id(string $id)
@@ -82,7 +84,9 @@ class Button implements ButtonInterface
 
 	public function getValue(): string
 	{
-		return $this->attributes['value'];
+		$value = $this->attributes['value'];
+
+		return is_scalar($value) || $value instanceof Stringable ? (string) $value : '';
 	}
 
 	public function getType(): string

@@ -9,7 +9,6 @@ use function array_merge;
 use function get_object_vars;
 use function is_array;
 use function ksort;
-use function method_exists;
 
 abstract class AbstractConfig implements ConfigInterface
 {
@@ -112,6 +111,14 @@ abstract class AbstractConfig implements ConfigInterface
 		return $this;
 	}
 
+	/**
+	 * Additional config var data (title, options, min/max/step, callback, etc.).
+	 */
+	protected function extendData(): array
+	{
+		return [];
+	}
+
 	public function toArray(): array
 	{
 		$data = get_object_vars($this);
@@ -120,9 +127,7 @@ abstract class AbstractConfig implements ConfigInterface
 
 		unset($data['type'], $data['name']);
 
-		if (method_exists(static::class, 'extendData')) {
-			$data = array_merge($data, $this->extendData());
-		}
+		$data = array_merge($data, $this->extendData());
 
 		if (isset($data['params']) && is_array($data['params'])) {
 			$data = array_merge($data, $data['params']);
@@ -132,6 +137,9 @@ abstract class AbstractConfig implements ConfigInterface
 
 		ksort($data);
 
-		return array_filter($data);
+		// Only null and '' are dropped: zeroes and false are valid setting values,
+		// while an empty string must stay dropped so that DividerConfig keeps turning
+		// into '' in ConfigBuilder::build()
+		return array_filter($data, static fn($value) => $value !== null && $value !== '');
 	}
 }
