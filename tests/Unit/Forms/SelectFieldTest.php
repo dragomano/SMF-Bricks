@@ -38,6 +38,16 @@ it('can return options', function () {
 	]);
 });
 
+it('does not depend on the order of setValue() and multiple()', function () {
+	$multipleFirst = SelectField::make('select_field', 'Choice')->multiple()->setValue(['no', 'yes']);
+	$valueFirst    = SelectField::make('select_field', 'Choice')->setValue(['no', 'yes'])->multiple();
+
+	expect($multipleFirst->getValue())->toBe(['no', 'yes'])
+		->and($valueFirst->getValue())->toBe(['no', 'yes'])
+		->and($multipleFirst->toArray()['selected'])->toBe(['no', 'yes'])
+		->and($valueFirst->toArray()['selected'])->toBe(['no', 'yes']);
+});
+
 it('can be multiple', function () {
 	expect($this->field->multiple()->setValue(['no', 'yes'])->getValue())->toBe(['no', 'yes'])
 		->and($this->field->multiple()->setValue('test')->getValue())->toBe(['test']);

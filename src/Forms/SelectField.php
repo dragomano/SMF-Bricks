@@ -15,10 +15,14 @@ use function is_array;
 
 class SelectField extends Field implements OptionProviderInterface, SelectableInterface, SizeableInterface
 {
-	use HasMultipleAttribute;
+	use HasMultipleAttribute {
+		multiple as private setMultipleFlag;
+	}
 	use HasOptions;
 	use HasSelectedAttribute;
 	use HasSizeAttribute;
+
+	private mixed $rawValue = null;
 
 	protected function __construct(string $name, string $label)
 	{
@@ -29,14 +33,36 @@ class SelectField extends Field implements OptionProviderInterface, SelectableIn
 
 	public function setValue(mixed $value): static
 	{
-		if (empty($this->attributes['multiple'])) {
-			$value = is_array($value) ? implode(',', $value) : (string) $value;
-		} else {
-			$value = (array) $value;
+		$this->rawValue = $value;
+
+		$normalized = $this->normalizeValue($value);
+
+		$this->selected($normalized);
+
+		return parent::setValue($normalized);
+	}
+
+	/**
+	 * The flag is applied before the value is normalized again,
+	 * so that the call order of multiple() and setValue() does not matter.
+	 */
+	public function multiple(bool $multiple = true): static
+	{
+		$this->setMultipleFlag($multiple);
+
+		if ($this->rawValue !== null) {
+			$this->setValue($this->rawValue);
 		}
 
-		$this->selected($value);
+		return $this;
+	}
 
-		return parent::setValue($value);
+	private function normalizeValue(mixed $value): string|array
+	{
+		if (empty($this->attributes['multiple'])) {
+			return is_array($value) ? implode(',', $value) : (string) $value;
+		}
+
+		return (array) $value;
 	}
 }

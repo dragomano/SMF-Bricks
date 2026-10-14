@@ -9,11 +9,15 @@ use Bugo\Bricks\Tables\Interfaces\TableBuilderInterface;
 use InvalidArgumentException;
 
 use function array_merge;
+use function array_slice;
+use function count;
 use function filter_var;
 use function get_debug_type;
 use function is_array;
 use function is_callable;
 use function sprintf;
+use function str_contains;
+use function str_starts_with;
 
 /**
  * @method self id(string $id)
@@ -78,15 +82,13 @@ class TableBuilder implements TableBuilderInterface
 
 	public function setFormAction(string $action): static
 	{
-		$url = filter_var($action, FILTER_VALIDATE_URL);
-
-		if ($url === false) {
+		if (! $this->isValidAction($action)) {
 			throw new InvalidArgumentException('You should provide a valid URL');
 		}
 
-		$this->attributes['base_href'] = $url;
+		$this->attributes['base_href'] = $action;
 
-		$this->addFormData(['href' => $url]);
+		$this->addFormData(['href' => $action]);
 
 		return $this;
 	}
@@ -126,12 +128,15 @@ class TableBuilder implements TableBuilderInterface
 
 	public function setItems(array|callable $items, array $params = []): static
 	{
-		$type = match (true) {
-			is_callable($items) => 'callable',
-			default => 'array',
-		};
-
-		$this->attributes['get_items'] = $this->resolveItemsAttribute($type, $items, $params);
+		$this->attributes['get_items'] = is_callable($items)
+			? [
+				'function' => $items,
+				'params'   => $params,
+			]
+			: [
+				'function' => fn($start, $limit, $sort) => array_slice($items, (int) $start, (int) $limit),
+				'params'   => $params,
+			];
 
 		return $this;
 	}
@@ -265,18 +270,19 @@ class TableBuilder implements TableBuilderInterface
 		return $this->attributes;
 	}
 
-	private function resolveItemsAttribute(string $type, array|callable $items, array $params): array
+	/**
+	 * Accepts absolute URLs as well as relative ones (e.g. "index.php?action=admin"
+	 * or "/forum/index.php"), because SMF may provide a relative form action.
+	 */
+	private function isValidAction(string $action): bool
 	{
-		return match ($type) {
-			'callable' => [
-				'function' => $items,
-				'params'   => $params,
-			],
-			default => [
-				'function' => fn($start, $limit, $sort) => $items,
-				'params'   => $params,
-			],
-		};
+		if (filter_var($action, FILTER_VALIDATE_URL) !== false) {
+			return true;
+		}
+
+		return str_contains($action, '/')
+			|| str_contains($action, '.php')
+			|| str_starts_with($action, '?');
 	}
 
 	private function resolveCountAttribute(string $type, mixed $count, array $params): array
@@ -287,7 +293,7 @@ class TableBuilder implements TableBuilderInterface
 				'params'   => $params,
 			],
 			'array' => [
-				'function' => fn() => $count,
+				'function' => fn() => count($count),
 				'params'   => $params,
 			],
 			default => [

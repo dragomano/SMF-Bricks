@@ -20,10 +20,6 @@ class Column implements ColumnInterface
 
 	private array $attributes = [];
 
-	private array $header = [];
-
-	private array $data = [];
-
 	private function __construct(private readonly string $name, string $title)
 	{
 		$this->attributes['header']['value'] = $title;

@@ -6,11 +6,11 @@ use Bugo\Bricks\Tables\Interfaces\TablePresenterInterface;
 
 abstract class AbstractTablePresenter implements TablePresenterInterface
 {
-	protected static array $excludeColumns = [];
+	protected array $excludeColumns = [];
 
 	public function excludeColumns(array $columns): static
 	{
-		static::$excludeColumns = $columns;
+		$this->excludeColumns = $columns;
 
 		return $this;
 	}

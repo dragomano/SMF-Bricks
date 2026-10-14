@@ -96,6 +96,38 @@ it('can remove a button from the form', function () {
 	expect($this->builder->removeButton($button->getName())->build()['buttons'])->not->toContain($button->getName());
 });
 
+it('can remove a field from a container', function () {
+	$this->builder->addField(Field::make('bio', 'Bio'));
+	$this->builder->addFields([
+		TextField::make('username', 'Username'),
+		EmailField::make(),
+	], 'container_class');
+	$this->builder->addFields([], 'empty_container');
+
+	$this->builder->removeField('username');
+
+	$fields = $this->builder->build()['fields'][0]['fields'];
+
+	expect($fields)->toHaveCount(1)
+		->and($fields[0]->getName())->toBe('email');
+});
+
+it('can remove a button from a container', function () {
+	$this->builder->addButton(SubmitButton::make('plain', 'Plain'));
+	$this->builder->addButtons([
+		SubmitButton::make(),
+		ResetButton::make(),
+	], 'container_class');
+	$this->builder->addButtons([], 'empty_container');
+
+	$this->builder->removeButton('submit');
+
+	$buttons = $this->builder->build()['buttons'][0]['buttons'];
+
+	expect($buttons)->toHaveCount(1)
+		->and($buttons[0]->getName())->toBe('reset');
+});
+
 it('can add hidden fields to the form', function () {
 	$this->builder->addHiddenFields(['session_id' => '123456']);
 

@@ -12,6 +12,13 @@ beforeEach(function () {
 	];
 });
 
+it('returns a string value for any scalar input', function () {
+	expect(Button::make('submit', 'Submit')->setValue(42)->getValue())->toBe('42')
+		->and(Button::make('submit', 'Submit')->setValue(true)->getValue())->toBe('1')
+		->and(Button::make('submit', 'Submit')->setValue(3.5)->getValue())->toBe('3.5')
+		->and(Button::make('submit', 'Submit')->setValue([])->getValue())->toBe('');
+});
+
 it('can set an id', function () {
 	expect($this->button->setId('some_id')->toArray()['id'])->toBe('some_id');
 });
