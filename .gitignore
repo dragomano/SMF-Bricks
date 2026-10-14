@@ -1,8 +1,13 @@
 .idea/
-.phpunit.result.cache
+.phpstan.cache/
 .phpunit.cache/
 .vscode/
 composer.lock
 coverage.xml
 coverage/
 vendor/
+
+audit_baseline_*.txt
+
+*.md
+!README*.md

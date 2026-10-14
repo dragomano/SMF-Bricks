@@ -34,11 +34,14 @@
     "nette/utils": "^4.0"
   },
   "require-dev": {
-    "mockery/mockery": "dev-bugfix/spy-generics",
-    "pestphp/pest": "^3.8|^4.4",
-    "rector/rector": "^2.3"
+    "mockery/mockery": "^1.6.15",
+    "pestphp/pest": "^3|^4|^5",
+    "phpstan/phpstan": "^2.3",
+    "rector/rector": "^2.6"
   },
   "scripts": {
+    "analyse": "vendor/bin/phpstan analyse --no-progress",
+    "analyse-baseline": "vendor/bin/phpstan analyse --no-progress --generate-baseline",
     "check": "vendor/bin/rector process --dry-run --clear-cache",
     "test": "vendor/bin/pest --colors=always",
     "test-coverage": "vendor/bin/pest --colors=always --coverage --min=100",
