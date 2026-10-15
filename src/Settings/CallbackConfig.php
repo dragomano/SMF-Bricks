@@ -2,6 +2,9 @@
 
 namespace Bugo\Bricks\Settings;
 
+/**
+ * @phpstan-consistent-constructor
+ */
 class CallbackConfig extends AbstractConfig
 {
 	protected string $type = 'callback';
@@ -13,6 +16,9 @@ class CallbackConfig extends AbstractConfig
 		return $this;
 	}
 
+	/**
+	 * @return array<int|string, mixed>
+	 */
 	public function extendData(): array
 	{
 		return [

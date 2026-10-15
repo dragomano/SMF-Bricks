@@ -23,5 +23,8 @@ interface BreadcrumbItemInterface
 
 	public function getAfter(): ?string;
 
+	/**
+	 * @return array<string, mixed>
+	 */
 	public function toArray(): array;
 }

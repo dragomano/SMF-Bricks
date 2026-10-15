@@ -14,6 +14,9 @@ interface ButtonInterface extends BrickInterface
 
 	public function setValue(mixed $value): static;
 
+	/**
+	 * @param array<string, mixed> $attributes
+	 */
 	public function setAttributes(array $attributes): static;
 
 	public function getName(): string;

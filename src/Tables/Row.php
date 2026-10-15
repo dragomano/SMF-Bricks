@@ -17,6 +17,7 @@ class Row implements RowInterface
 {
 	use HasShortMethods;
 
+	/** @var array<string, mixed> */
 	private array $attributes = [];
 
 	private function __construct(string $value, string $class = '')
@@ -59,6 +60,9 @@ class Row implements RowInterface
 		return $this;
 	}
 
+	/**
+	 * @return array<string, mixed>
+	 */
 	public function toArray(): array
 	{
 		return $this->attributes;

@@ -8,5 +8,8 @@ interface BrickInterface
 
 	public function setStyle(string $style): static;
 
+	/**
+	 * @return array<string, mixed>
+	 */
 	public function toArray(): array;
 }

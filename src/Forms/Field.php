@@ -13,11 +13,14 @@ use function array_merge;
  * @method self value(mixed $value)
  * @method self class(string $class)
  * @method self style(string $style)
+ *
+ * @phpstan-consistent-constructor
  */
 class Field implements FieldInterface
 {
 	use HasShortMethods;
 
+	/** @var array<string, mixed> */
 	protected array $attributes = [];
 
 	protected function __construct(string $name, string $label)
@@ -89,6 +92,9 @@ class Field implements FieldInterface
 		return $this;
 	}
 
+	/**
+	 * @param array<string, mixed> $attributes
+	 */
 	public function setAttributes(array $attributes): static
 	{
 		$this->attributes = array_merge($this->attributes, $attributes);
@@ -111,6 +117,9 @@ class Field implements FieldInterface
 		return $this->attributes['type'];
 	}
 
+	/**
+	 * @return array<string, mixed>
+	 */
 	public function toArray(): array
 	{
 		return $this->attributes;

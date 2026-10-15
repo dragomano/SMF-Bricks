@@ -27,6 +27,9 @@ class FloatConfig extends AbstractConfig
 		return $this;
 	}
 
+	/**
+	 * @return array<int|string, mixed>
+	 */
 	public function extendData(): array
 	{
 		return [

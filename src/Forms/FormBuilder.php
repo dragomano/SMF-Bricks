@@ -21,11 +21,14 @@ use function is_array;
  * @method self class(string $class)
  * @method self target(string $target)
  * @method self script(string $script)
+ *
+ * @phpstan-consistent-constructor
  */
 class FormBuilder implements FormBuilderInterface
 {
 	use HasShortMethods;
 
+	/** @var array<string, mixed> */
 	private array $attributes = [];
 
 	protected function __construct(string $id, string $title = '')
@@ -269,6 +272,9 @@ class FormBuilder implements FormBuilderInterface
 		return $this;
 	}
 
+	/**
+	 * @param array<string, mixed> $fields
+	 */
 	public function addHiddenFields(array $fields): static
 	{
 		foreach ($fields as $name => $value) {
@@ -288,6 +294,9 @@ class FormBuilder implements FormBuilderInterface
 		return $this->attributes['title'];
 	}
 
+	/**
+	 * @return array<string, mixed>
+	 */
 	public function build(): array
 	{
 		return $this->attributes;

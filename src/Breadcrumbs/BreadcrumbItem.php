@@ -6,6 +6,9 @@ use Bugo\Bricks\Breadcrumbs\Interfaces\BreadcrumbItemInterface;
 
 use function array_filter;
 
+/**
+ * @phpstan-consistent-constructor
+ */
 class BreadcrumbItem implements BreadcrumbItemInterface
 {
 	protected function __construct(
@@ -59,6 +62,9 @@ class BreadcrumbItem implements BreadcrumbItemInterface
 		return $this->after;
 	}
 
+	/**
+	 * @return array<string, mixed>
+	 */
 	public function toArray(): array
 	{
 		return array_filter([

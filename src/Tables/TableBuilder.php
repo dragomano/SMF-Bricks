@@ -23,14 +23,17 @@ use function str_starts_with;
  * @method self id(string $id)
  * @method self name(string $name)
  * @method self title(string $title)
- * @method self items(array|callable $items, array $params = [])
- * @method self count(mixed $count, array $params = [])
+ * @method self items(array<int|string, mixed>|callable $items, array<string, mixed> $params = [])
+ * @method self count(mixed $count, array<string, mixed> $params = [])
  * @method self script(string $script)
+ *
+ * @phpstan-consistent-constructor
  */
 class TableBuilder implements TableBuilderInterface
 {
 	use HasShortMethods;
 
+	/** @var array<string, mixed> */
 	private array $attributes = [];
 
 	protected function __construct(string $id, string $title)
@@ -126,6 +129,10 @@ class TableBuilder implements TableBuilderInterface
 		return $this;
 	}
 
+	/**
+	 * @param array<int|string, mixed>|callable $items
+	 * @param array<string, mixed> $params
+	 */
 	public function setItems(array|callable $items, array $params = []): static
 	{
 		$this->attributes['get_items'] = is_callable($items)
@@ -141,6 +148,9 @@ class TableBuilder implements TableBuilderInterface
 		return $this;
 	}
 
+	/**
+	 * @param array<string, mixed> $params
+	 */
 	public function setCount(mixed $count, array $params = []): static
 	{
 		$type = match (true) {
@@ -192,6 +202,9 @@ class TableBuilder implements TableBuilderInterface
 		return $this;
 	}
 
+	/**
+	 * @param array<string, mixed> $data
+	 */
 	public function addFormData(array $data): static
 	{
 		$this->attributes['form'] = array_merge($this->attributes['form'] ?? [], $data);
@@ -199,6 +212,9 @@ class TableBuilder implements TableBuilderInterface
 		return $this;
 	}
 
+	/**
+	 * @param array<string, mixed> $fields
+	 */
 	public function addHiddenFields(array $fields): static
 	{
 		$this->attributes['form']['hidden_fields'] = array_merge(
@@ -265,6 +281,9 @@ class TableBuilder implements TableBuilderInterface
 		return $this->attributes['title'];
 	}
 
+	/**
+	 * @return array<string, mixed>
+	 */
 	public function build(): array
 	{
 		return $this->attributes;
@@ -285,6 +304,11 @@ class TableBuilder implements TableBuilderInterface
 			|| str_starts_with($action, '?');
 	}
 
+	/**
+	 * @param array<string, mixed> $params
+	 *
+	 * @return array<string, mixed>
+	 */
 	private function resolveCountAttribute(string $type, mixed $count, array $params): array
 	{
 		return match ($type) {

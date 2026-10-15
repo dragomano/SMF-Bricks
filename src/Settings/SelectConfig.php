@@ -6,6 +6,9 @@ class SelectConfig extends AbstractConfig
 {
 	protected string $type = 'select';
 
+	/**
+	 * @param array<int|string, mixed> $options
+	 */
 	public function setOptions(array $options): self
 	{
 		$this->params['options'] = $options;
@@ -13,6 +16,9 @@ class SelectConfig extends AbstractConfig
 		return $this;
 	}
 
+	/**
+	 * @return array<int|string, mixed>
+	 */
 	public function extendData(): array
 	{
 		return [

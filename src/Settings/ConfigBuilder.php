@@ -10,8 +10,12 @@ use function array_map;
 use function get_debug_type;
 use function sprintf;
 
+/**
+ * @phpstan-consistent-constructor
+ */
 class ConfigBuilder implements ConfigBuilderInterface
 {
+	/** @var array<int, ConfigInterface> */
 	private array $vars = [];
 
 	protected function __construct() {}
@@ -50,6 +54,9 @@ class ConfigBuilder implements ConfigBuilderInterface
 		return $this;
 	}
 
+	/**
+	 * @return array<int, array<int|string, mixed>|string>
+	 */
 	public function build(): array
 	{
 		return array_map(fn(ConfigInterface $var) => $var->toArray() ?: '', $this->vars);

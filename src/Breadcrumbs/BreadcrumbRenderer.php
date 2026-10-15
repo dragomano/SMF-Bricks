@@ -7,6 +7,9 @@ use Nette\Utils\Html;
 
 class BreadcrumbRenderer implements RendererInterface
 {
+	/**
+	 * @param array<int|string, mixed> $data
+	 */
 	public function render(array $data): void
 	{
 		$nav = Html::el('nav', ['aria-label' => 'breadcrumbs']);

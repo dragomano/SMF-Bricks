@@ -6,6 +6,9 @@ interface ConfigInterface
 {
 	public static function make(string $name): static;
 
+	/**
+	 * @param array<string, mixed> $attributes
+	 */
 	public function setAttributes(array $attributes): self;
 
 	public function setAttribute(string $name, string $value): self;
@@ -30,5 +33,8 @@ interface ConfigInterface
 
 	public function setTab(string $tab): self;
 
+	/**
+	 * @return array<int|string, mixed>
+	 */
 	public function toArray(): array;
 }

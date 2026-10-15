@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Bugo\Bricks\Forms;
 
+use function in_array;
+
 enum HtmlFieldType: string
 {
 	case BUTTON   = 'button';
@@ -26,23 +28,19 @@ enum HtmlFieldType: string
 	case TEXTAREA = 'textarea';
 	case URL      = 'url';
 
-	public static function getInputTypes(): array
+	public function isInput(): bool
 	{
-		return [
-			self::CHECKBOX->value,
-			self::COLOR->value,
-			self::DATE->value,
-			self::EMAIL->value,
-			self::FILE->value,
-			self::HIDDEN->value,
-			self::NUMBER->value,
-			self::PASSWORD->value,
-			self::RADIO->value,
-			self::RANGE->value,
-			self::SEARCH->value,
-			self::TEL->value,
-			self::TEXT->value,
-			self::URL->value,
-		];
+		return ! in_array($this, [
+			self::BUTTON,
+			self::RESET,
+			self::SELECT,
+			self::SUBMIT,
+			self::TEXTAREA,
+		], true);
+	}
+
+	public function getTagName(): string
+	{
+		return $this->isInput() ? 'input' : $this->value;
 	}
 }

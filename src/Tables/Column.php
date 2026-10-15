@@ -18,6 +18,7 @@ class Column implements ColumnInterface
 {
 	use HasShortMethods;
 
+	/** @var array<string, mixed> */
 	private array $attributes = [];
 
 	private function __construct(private readonly string $name, string $title)
@@ -44,6 +45,9 @@ class Column implements ColumnInterface
 		return $this;
 	}
 
+	/**
+	 * @param array<string, mixed>|Closure|string $data
+	 */
 	public function setData(Closure|string|array $data, ?string $class = null, ?string $style = null): static
 	{
 		if (is_string($data)) {
@@ -80,6 +84,9 @@ class Column implements ColumnInterface
 		return $this->name;
 	}
 
+	/**
+	 * @return array<string, mixed>
+	 */
 	public function toArray(): array
 	{
 		return $this->attributes;

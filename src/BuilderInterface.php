@@ -16,5 +16,8 @@ interface BuilderInterface
 
 	public function getTitle(): string;
 
+	/**
+	 * @return array<string, mixed>
+	 */
 	public function build(): array;
 }

@@ -57,6 +57,9 @@ class SelectField extends Field implements OptionProviderInterface, SelectableIn
 		return $this;
 	}
 
+	/**
+	 * @return array<int|string, mixed>|string
+	 */
 	private function normalizeValue(mixed $value): string|array
 	{
 		if (empty($this->attributes['multiple'])) {

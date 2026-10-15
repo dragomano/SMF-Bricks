@@ -18,11 +18,30 @@ use const ARRAY_FILTER_USE_KEY;
 
 class FormRenderer implements RendererInterface
 {
+	private ?RequestData $request = null;
+
+	/**
+	 * Replaces the request data that is taken from the superglobals by default.
+	 * Useful for tests and for rendering forms outside of a web request context.
+	 */
+	public function withRequest(RequestData $request): static
+	{
+		$clone = clone $this;
+		$clone->request = $request;
+
+		return $clone;
+	}
+
+	/**
+	 * @param array<int|string, mixed> $data
+	 */
 	public function render(array $data): void
 	{
+		$request = $this->request ?? RequestData::fromGlobals();
+
 		$form = Html::el('form', ['accept-charset' => 'utf-8']);
 
-		$this->prepareForm($form, $data);
+		$this->prepareForm($form, $data, $request);
 
 		echo $form;
 
@@ -31,7 +50,10 @@ class FormRenderer implements RendererInterface
 		}
 	}
 
-	private function prepareForm(Html $form, array $data): void
+	/**
+	 * @param array<int|string, mixed> $data
+	 */
+	private function prepareForm(Html $form, array $data, RequestData $request): void
 	{
 		$form
 			->id($data['id'])
@@ -50,19 +72,22 @@ class FormRenderer implements RendererInterface
 
 		$body = Html::el();
 
-		$this->prepareFields($body, $data);
-		$this->prepareButtons($body, $data);
+		$this->prepareFields($body, $data, $request);
+		$this->prepareButtons($body, $data, $request);
 
 		$form->addHtml(
 			Html::el('div', ['class' => $data['body_class'] ?? null])->addHtml($body)
 		);
 	}
 
-	private function prepareFields(Html $body, array $data): void
+	/**
+	 * @param array<int|string, mixed> $data
+	 */
+	private function prepareFields(Html $body, array $data, RequestData $request): void
 	{
 		foreach ($data['fields'] ?? [] as $field) {
 			if ($field instanceof FieldInterface) {
-				$body->addHtml($this->renderField($field->toArray()));
+				$body->addHtml($this->renderField($field->toArray(), $request));
 
 				continue;
 			}
@@ -75,11 +100,14 @@ class FormRenderer implements RendererInterface
 				));
 			}
 
-			$body->addHtml($this->renderContainer('field', $field['class'] ?? '', $field['fields']));
+			$body->addHtml($this->renderContainer('field', $field['class'] ?? '', $field['fields'], $request));
 		}
 	}
 
-	private function prepareButtons(Html $body, array $data): void
+	/**
+	 * @param array<int|string, mixed> $data
+	 */
+	private function prepareButtons(Html $body, array $data, RequestData $request): void
 	{
 		if (empty($data['buttons']))
 			return;
@@ -99,17 +127,20 @@ class FormRenderer implements RendererInterface
 				));
 			}
 
-			$body->addHtml($this->renderContainer('button', $button['class'] ?? '', $button['buttons']));
+			$body->addHtml($this->renderContainer('button', $button['class'] ?? '', $button['buttons'], $request));
 		}
 	}
 
-	private function renderContainer(string $type, string $class, array $elements): Html
+	/**
+	 * @param array<int, mixed> $elements
+	 */
+	private function renderContainer(string $type, string $class, array $elements, RequestData $request): Html
 	{
 		$container = Html::el('div', ['class' => $class]);
 
 		foreach ($elements as $element) {
 			if ($type === 'field' && $element instanceof FieldInterface) {
-				$container->addHtml($this->renderField($element->toArray()));
+				$container->addHtml($this->renderField($element->toArray(), $request));
 			} elseif ($type === 'button' && $element instanceof ButtonInterface) {
 				$container->addHtml($this->renderButton($element->toArray()));
 			} else {
@@ -124,24 +155,23 @@ class FormRenderer implements RendererInterface
 		return $container;
 	}
 
-	private function renderField(array $field): Html
+	/**
+	 * @param array<string, mixed> $field
+	 */
+	private function renderField(array $field, RequestData $request): Html
 	{
 		if (! isset($field['type'], $field['name'])) {
 			throw new InvalidArgumentException('The field data must contain the "type" and "name" keys');
 		}
 
-		$text = $field['label'] ?? '';
+		$text = (string) ($field['label'] ?? '');
 
 		unset($field['label']);
 
-		$name = match (true) {
-			in_array($field['type'], HtmlFieldType::getInputTypes()) => 'input',
-			default => $field['type'],
-		};
-
+		$name   = HtmlFieldType::from($field['type'])->getTagName();
 		$result = Html::el($name, $field)->name($field['name']);
 
-		$this->populateFieldValue($result, $field);
+		$this->populateFieldValue($result, $field, $request);
 
 		if ($field['type'] === HtmlFieldType::RADIO->value) {
 			$result = $this->prepareRadioOptions($field);
@@ -157,19 +187,25 @@ class FormRenderer implements RendererInterface
 			return $result;
 		}
 
-		$label = Html::el('label', $text)->class('strong');
-
-		// A group of radio buttons has no single control to point at,
-		// each option is wrapped into its own label instead.
-		if ($field['type'] !== HtmlFieldType::RADIO->value) {
-			$label->for($field['id'] ?? $field['name']);
+		// A group of radio buttons has no single control to point at, so the group
+		// is described by a legend and every option is wrapped into its own label.
+		if ($field['type'] === HtmlFieldType::RADIO->value) {
+			return Html::el('fieldset', ['class' => 'settings'])
+				->addHtml(Html::el('legend')->class('strong')->setText($text))
+				->addHtml($result);
 		}
 
 		return Html::el('dl', ['class' => 'settings'])
-			->addHtml(Html::el('dt')->addHtml($label))
+			->addHtml(Html::el('dt')
+				->addHtml(Html::el('label', $text)
+					->class('strong')
+					->for($field['id'] ?? $field['name'])))
 			->addHtml(Html::el('dd')->addHtml($result));
 	}
 
+	/**
+	 * @param array<string, mixed> $button
+	 */
 	private function renderButton(array $button): Html
 	{
 		if (! isset($button['name'])) {
@@ -185,27 +221,33 @@ class FormRenderer implements RendererInterface
 			->type($button['type'] ?? null);
 	}
 
-	private function populateFieldValue(Html $result, array &$field): void
+	/**
+	 * @param array<string, mixed> $field
+	 */
+	private function populateFieldValue(Html $result, array &$field, RequestData $request): void
 	{
-		if (empty($_SERVER['REQUEST_METHOD']) || $_SERVER['REQUEST_METHOD'] !== 'POST')
+		if (! $request->isPost())
 			return;
 
 		if ($field['type'] === HtmlFieldType::CHECKBOX->value) {
-			$result->checked((bool) ($_POST[$field['name']] ?? false));
+			$result->checked((bool) ($request->post[$field['name']] ?? false));
 		}
 
-		if (! isset($_POST[$field['name']]))
+		if (! isset($request->post[$field['name']]))
 			return;
 
 		if ($field['type'] === HtmlFieldType::TEXTAREA->value) {
-			$result->setText($_POST[$field['name']]);
+			$result->setText($request->post[$field['name']]);
 		} elseif (in_array($field['type'], [HtmlFieldType::RADIO->value, HtmlFieldType::SELECT->value])) {
-			$field['selected'] = $_POST[$field['name']];
+			$field['selected'] = $request->post[$field['name']];
 		} else {
-			$result->value($_POST[$field['name']]);
+			$result->value($request->post[$field['name']]);
 		}
 	}
 
+	/**
+	 * @param array<string, mixed> $field
+	 */
 	private function prepareRadioOptions(array $field): Html
 	{
 		if (empty($field['options'])) {
@@ -232,6 +274,9 @@ class FormRenderer implements RendererInterface
 		return $result;
 	}
 
+	/**
+	 * @param array<string, mixed> $field
+	 */
 	private function prepareSelectOptions(array $field): Html
 	{
 		if (empty($field['options'])) {

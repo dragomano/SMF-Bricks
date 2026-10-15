@@ -20,6 +20,9 @@ interface FieldInterface extends BrickInterface
 
 	public function disabled(bool $disabled = true): static;
 
+	/**
+	 * @param array<string, mixed> $attributes
+	 */
 	public function setAttributes(array $attributes): static;
 
 	public function getName(): string;

@@ -10,12 +10,16 @@ use function get_object_vars;
 use function is_array;
 use function ksort;
 
+/**
+ * @phpstan-consistent-constructor
+ */
 abstract class AbstractConfig implements ConfigInterface
 {
 	protected string $type;
 
 	protected string $tab;
 
+	/** @var array<string, mixed> */
 	protected array $params = [];
 
 	protected function __construct(protected string $name) {}
@@ -25,6 +29,9 @@ abstract class AbstractConfig implements ConfigInterface
 		return new static($name);
 	}
 
+	/**
+	 * @param array<string, mixed> $attributes
+	 */
 	public function setAttributes(array $attributes): self
 	{
 		foreach ($attributes as $name => $value) {
@@ -114,11 +121,17 @@ abstract class AbstractConfig implements ConfigInterface
 	/**
 	 * Additional config var data (title, options, min/max/step, callback, etc.).
 	 */
+	/**
+	 * @return array<int|string, mixed>
+	 */
 	protected function extendData(): array
 	{
 		return [];
 	}
 
+	/**
+	 * @return array<int|string, mixed>
+	 */
 	public function toArray(): array
 	{
 		$data = get_object_vars($this);

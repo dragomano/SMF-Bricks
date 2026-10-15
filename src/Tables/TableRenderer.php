@@ -7,6 +7,9 @@ use Nette\Utils\Html;
 
 class TableRenderer implements RendererInterface
 {
+	/**
+	 * @param array<int|string, mixed> $data
+	 */
 	public function render(array $data): void
 	{
 		$root = Html::el();

@@ -10,6 +10,9 @@ use function array_map;
 use function get_debug_type;
 use function sprintf;
 
+/**
+ * @phpstan-consistent-constructor
+ */
 class BreadcrumbBuilder implements BreadcrumbBuilderInterface
 {
 	/** @var array<int, BreadcrumbItemInterface> */
@@ -110,16 +113,25 @@ class BreadcrumbBuilder implements BreadcrumbBuilderInterface
 		return $this;
 	}
 
+	/**
+	 * @return array<int, BreadcrumbItemInterface>
+	 */
 	public function getAll(): array
 	{
 		return $this->items;
 	}
 
+	/**
+	 * @return array<string, mixed>|null
+	 */
 	public function getByIndex(int $index): ?array
 	{
 		return isset($this->items[$index]) ? $this->items[$index]->toArray() : null;
 	}
 
+	/**
+	 * @return array<int, array<string, mixed>|string>
+	 */
 	public function build(): array
 	{
 		return array_map(fn(BreadcrumbItemInterface $item) => $item->toArray() ?: '', $this->getAll());

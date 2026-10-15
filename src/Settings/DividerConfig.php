@@ -2,6 +2,9 @@
 
 namespace Bugo\Bricks\Settings;
 
+/**
+ * @phpstan-consistent-constructor
+ */
 class DividerConfig extends AbstractConfig
 {
 	public static function make(string $name = ''): static

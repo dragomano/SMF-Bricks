@@ -2,6 +2,9 @@
 
 namespace Bugo\Bricks\Forms;
 
+/**
+ * @phpstan-consistent-constructor
+ */
 class SubmitButton extends Button
 {
 	protected function __construct(string $name, string $value)

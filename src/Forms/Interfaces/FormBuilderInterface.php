@@ -19,12 +19,18 @@ interface FormBuilderInterface extends BuilderInterface
 		?string $class = null
 	): self;
 
+	/**
+	 * @param array<FieldInterface> $fields
+	 */
 	public function addFields(array $fields, ?string $containerClass = null, ?string $fieldClass = null): self;
 
 	public function addField(Field $field): self;
 
 	public function removeField(string $name): self;
 
+	/**
+	 * @param array<ButtonInterface> $buttons
+	 */
 	public function addButtons(array $buttons, ?string $containerClass = null, ?string $buttonClass = null): self;
 
 	public function addButton(Button $button): self;
@@ -37,5 +43,8 @@ interface FormBuilderInterface extends BuilderInterface
 
 	public function setBodyClass(string $class): self;
 
+	/**
+	 * @param array<string, mixed> $fields
+	 */
 	public function addHiddenFields(array $fields): self;
 }
