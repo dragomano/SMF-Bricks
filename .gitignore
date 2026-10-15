@@ -11,3 +11,5 @@ audit_baseline_*.txt
 
 *.md
 !README*.md
+!CONTRIBUTING.md
+!SECURITY.md
