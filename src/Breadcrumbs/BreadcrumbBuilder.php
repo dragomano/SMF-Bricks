@@ -6,7 +6,6 @@ use Bugo\Bricks\Breadcrumbs\Interfaces\BreadcrumbBuilderInterface;
 use Bugo\Bricks\Breadcrumbs\Interfaces\BreadcrumbItemInterface;
 use InvalidArgumentException;
 
-use function array_map;
 use function get_debug_type;
 use function sprintf;
 
@@ -68,36 +67,34 @@ class BreadcrumbBuilder implements BreadcrumbBuilderInterface
 
 		$item = $this->items[$index];
 
+		$name   = $item->getName();
+		$url    = $item->getUrl();
+		$before = $item->getBefore();
+		$after  = $item->getAfter();
+
 		switch ($key) {
 			case 'name':
-				$this->items[$index] = BreadcrumbItem::make(
-					(string) $value,
-					$item->getUrl(),
-					$item->getBefore(),
-					$item->getAfter()
-				);
+				$name = (string) $value;
 				break;
 
 			case 'url':
-				$this->items[$index] = BreadcrumbItem::make(
-					$item->getName(),
-					$value !== null ? (string) $value : null,
-					$item->getBefore(),
-					$item->getAfter()
-				);
+				$url = $value !== null ? (string) $value : null;
 				break;
 
 			case 'before':
-				$item->setBefore($value !== null ? (string) $value : null);
+				$before = $value !== null ? (string) $value : null;
 				break;
 
 			case 'after':
-				$item->setAfter($value !== null ? (string) $value : null);
+				$after = $value !== null ? (string) $value : null;
 				break;
 
 			default:
-				break;
+				return $this;
 		}
+
+		// The item is rebuilt through its own factory, so a subclass keeps its class.
+		$this->items[$index] = $item::make($name, $url, $before, $after);
 
 		return $this;
 	}
@@ -130,10 +127,25 @@ class BreadcrumbBuilder implements BreadcrumbBuilderInterface
 	}
 
 	/**
-	 * @return array<int, array<string, mixed>|string>
+	 * Only valid items are returned: an element without a name is skipped instead of being
+	 * replaced with an empty string.
+	 *
+	 * @return array<int, array<string, mixed>>
 	 */
 	public function build(): array
 	{
-		return array_map(fn(BreadcrumbItemInterface $item) => $item->toArray() ?: '', $this->getAll());
+		$items = [];
+
+		foreach ($this->getAll() as $item) {
+			$data = $item->toArray();
+
+			if (($data['name'] ?? '') === '') {
+				continue;
+			}
+
+			$items[] = $data;
+		}
+
+		return $items;
 	}
 }

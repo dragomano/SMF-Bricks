@@ -3,8 +3,6 @@
 namespace Bugo\Bricks\Forms\Interfaces;
 
 use Bugo\Bricks\BuilderInterface;
-use Bugo\Bricks\Forms\Button;
-use Bugo\Bricks\Forms\Field;
 
 interface FormBuilderInterface extends BuilderInterface
 {
@@ -24,7 +22,7 @@ interface FormBuilderInterface extends BuilderInterface
 	 */
 	public function addFields(array $fields, ?string $containerClass = null, ?string $fieldClass = null): self;
 
-	public function addField(Field $field): self;
+	public function addField(FieldInterface $field): self;
 
 	public function removeField(string $name): self;
 
@@ -33,7 +31,7 @@ interface FormBuilderInterface extends BuilderInterface
 	 */
 	public function addButtons(array $buttons, ?string $containerClass = null, ?string $buttonClass = null): self;
 
-	public function addButton(Button $button): self;
+	public function addButton(ButtonInterface $button): self;
 
 	public function removeButton(string $name): self;
 

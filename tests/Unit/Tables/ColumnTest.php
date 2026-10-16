@@ -66,3 +66,31 @@ it('returns all attributes as an array', function () {
 		]
 	]);
 });
+
+it('provides header aliases without changing data cell attributes', function () {
+	$column = Column::make('name', 'Name')
+		->setHeaderClass('header')
+		->setHeaderStyle('width: 20%')
+		->setData('name', 'cell', 'text-align: right');
+
+	expect($column->toArray())->toBe([
+		'header' => ['value' => 'Name', 'class' => 'header', 'style' => 'width: 20%'],
+		'data' => ['db' => 'name', 'class' => 'cell', 'style' => 'text-align: right'],
+	]);
+});
+
+it('allows subclasses to call the constructor and extend the attributes', function () {
+	$column = new class('custom', 'Custom') extends Column {
+		public function __construct(string $name, string $title)
+		{
+			parent::__construct($name, $title);
+			$this->attributes['data'] = ['db' => $name];
+		}
+	};
+
+	$created = $column::make('id', '#');
+
+	expect($created)->toBeInstanceOf($column::class)
+		->and($created->getName())->toBe('id')
+		->and($created->toArray())->toBe(['header' => ['value' => '#'], 'data' => ['db' => 'id']]);
+});

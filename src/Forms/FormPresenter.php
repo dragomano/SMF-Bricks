@@ -2,18 +2,20 @@
 
 namespace Bugo\Bricks\Forms;
 
+use Bugo\Bricks\DisplaysOutput;
 use Bugo\Bricks\Forms\Interfaces\FormBuilderInterface;
 use Bugo\Bricks\Forms\Interfaces\FormPresenterInterface;
 use Bugo\Bricks\RendererInterface;
+use Bugo\Bricks\StringRendererInterface;
 
 readonly class FormPresenter implements FormPresenterInterface
 {
-	public function __construct(private RendererInterface $renderer) {}
+	use DisplaysOutput;
+
+	public function __construct(private RendererInterface|StringRendererInterface $renderer) {}
 
 	public function show(FormBuilderInterface $builder): void
 	{
-		$data = $builder->build();
-
-		$this->renderer->render($data);
+		$this->display($builder->build());
 	}
 }

@@ -4,7 +4,7 @@ namespace Bugo\Bricks\Forms;
 
 use Bugo\Bricks\Forms\Interfaces\ButtonInterface;
 use Bugo\Bricks\Forms\Interfaces\FieldInterface;
-use Bugo\Bricks\RendererInterface;
+use Bugo\Bricks\StringRendererInterface;
 use InvalidArgumentException;
 use Nette\Utils\Html;
 
@@ -16,7 +16,7 @@ use function sprintf;
 
 use const ARRAY_FILTER_USE_KEY;
 
-class FormRenderer implements RendererInterface
+class FormRenderer implements StringRendererInterface
 {
 	private ?RequestData $request = null;
 
@@ -35,7 +35,7 @@ class FormRenderer implements RendererInterface
 	/**
 	 * @param array<int|string, mixed> $data
 	 */
-	public function render(array $data): void
+	public function render(array $data): string
 	{
 		$request = $this->request ?? RequestData::fromGlobals();
 
@@ -43,11 +43,13 @@ class FormRenderer implements RendererInterface
 
 		$this->prepareForm($form, $data, $request);
 
-		echo $form;
+		$result = (string) $form;
 
 		if (! empty($data['script'])) {
-			echo Html::el('script')->addHtml($data['script']);
+			$result .= (string) Html::el('script')->addHtml($data['script']);
 		}
+
+		return $result;
 	}
 
 	/**

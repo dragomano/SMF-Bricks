@@ -13,15 +13,19 @@ use function is_string;
  * @method self style(mixed $value)
  * @method self data(mixed $value)
  * @method self sort(mixed $value)
+ * @method self headerClass(string $class)
+ * @method self headerStyle(string $style)
+ *
+ * @phpstan-consistent-constructor
  */
 class Column implements ColumnInterface
 {
 	use HasShortMethods;
 
 	/** @var array<string, mixed> */
-	private array $attributes = [];
+	protected array $attributes = [];
 
-	private function __construct(private readonly string $name, string $title)
+	protected function __construct(private readonly string $name, string $title)
 	{
 		$this->attributes['header']['value'] = $title;
 	}
@@ -31,6 +35,9 @@ class Column implements ColumnInterface
 		return new static($name, $title);
 	}
 
+	/**
+	 * Sets the CSS class of the column header. Use setData() for data cell classes.
+	 */
 	public function setClass(string $class): static
 	{
 		$this->attributes['header']['class'] = $class;
@@ -38,11 +45,30 @@ class Column implements ColumnInterface
 		return $this;
 	}
 
+	/**
+	 * Sets the CSS class of the column header (an alias of setClass()).
+	 */
+	public function setHeaderClass(string $class): static
+	{
+		return $this->setClass($class);
+	}
+
+	/**
+	 * Sets the inline style of the column header. Use setData() for data cell styles.
+	 */
 	public function setStyle(string $style): static
 	{
 		$this->attributes['header']['style'] = $style;
 
 		return $this;
+	}
+
+	/**
+	 * Sets the inline style of the column header (an alias of setStyle()).
+	 */
+	public function setHeaderStyle(string $style): static
+	{
+		return $this->setStyle($style);
 	}
 
 	/**

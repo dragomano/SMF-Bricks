@@ -42,9 +42,7 @@ function renderFormQuietly(callable $callback): string
 }
 
 it('renders a form without any fields', function () {
-	$output = renderFormQuietly(static function () {
-		testRenderer()->render(FormBuilder::make('form_id', 'Test form')->build());
-	});
+	$output = testRenderer()->render(FormBuilder::make('form_id', 'Test form')->build());
 
 	expect($output)->toContain('id="form_id"')
 		->and($output)->toContain('Test form');

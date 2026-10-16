@@ -2,6 +2,7 @@
 
 namespace Bugo\Bricks\Tables;
 
+use function array_map;
 use function strtolower;
 
 enum RowPosition
@@ -15,5 +16,13 @@ enum RowPosition
 	public function name(): string
 	{
 		return strtolower($this->name);
+	}
+
+	/**
+	 * @return array<int, string>
+	 */
+	public static function names(): array
+	{
+		return array_map(static fn(self $position) => $position->name(), self::cases());
 	}
 }

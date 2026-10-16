@@ -4,23 +4,31 @@ namespace Bugo\Bricks\Tables;
 
 use Bugo\Bricks\HasShortMethods;
 use Bugo\Bricks\Tables\Interfaces\RowInterface;
+use InvalidArgumentException;
 
+use function implode;
+use function in_array;
 use function is_string;
+use function sprintf;
+use function strtolower;
 
 /**
  * @method self value(mixed $value)
  * @method self position(mixed $value)
+ * @method self customPosition(string $position)
  * @method self class(string $class)
  * @method self style(string $class)
+ *
+ * @phpstan-consistent-constructor
  */
 class Row implements RowInterface
 {
 	use HasShortMethods;
 
 	/** @var array<string, mixed> */
-	private array $attributes = [];
+	protected array $attributes = [];
 
-	private function __construct(string $value, string $class = '')
+	protected function __construct(string $value, string $class = '')
 	{
 		$this->setValue($value);
 		$this->setClass($class);
@@ -55,7 +63,27 @@ class Row implements RowInterface
 
 	public function setPosition(RowPosition|string $position): static
 	{
-		$this->attributes['position'] = is_string($position) ? $position : $position->name();
+		$name = is_string($position) ? strtolower($position) : $position->name();
+
+		if (! in_array($name, RowPosition::names(), true)) {
+			throw new InvalidArgumentException(sprintf(
+				'Unknown row position "%s", expected one of: %s',
+				$name,
+				implode(', ', RowPosition::names())
+			));
+		}
+
+		$this->attributes['position'] = $name;
+
+		return $this;
+	}
+
+	/**
+	 * Sets a position provided by a custom renderer without SMF position validation.
+	 */
+	public function setCustomPosition(string $position): static
+	{
+		$this->attributes['position'] = $position;
 
 		return $this;
 	}

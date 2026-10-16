@@ -2,8 +2,6 @@
 
 namespace Bugo\Bricks\Settings\Interfaces;
 
-use Bugo\Bricks\Settings\AbstractConfig;
-
 interface ConfigBuilderInterface
 {
 	public static function make(): static;
@@ -13,7 +11,7 @@ interface ConfigBuilderInterface
 	 */
 	public function addVars(array $vars): self;
 
-	public function addVar(AbstractConfig $var): self;
+	public function addVar(ConfigInterface $var): self;
 
 	/**
 	 * @return array<int, array<int|string, mixed>|string>

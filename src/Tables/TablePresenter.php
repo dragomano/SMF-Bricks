@@ -2,7 +2,9 @@
 
 namespace Bugo\Bricks\Tables;
 
+use Bugo\Bricks\DisplaysOutput;
 use Bugo\Bricks\RendererInterface;
+use Bugo\Bricks\StringRendererInterface;
 use Bugo\Bricks\Tables\Interfaces\TableBuilderInterface;
 
 use function array_filter;
@@ -12,7 +14,9 @@ use const ARRAY_FILTER_USE_KEY;
 
 class TablePresenter extends AbstractTablePresenter
 {
-	public function __construct(private readonly RendererInterface $renderer) {}
+	use DisplaysOutput;
+
+	public function __construct(private readonly RendererInterface|StringRendererInterface $renderer) {}
 
 	public function show(TableBuilderInterface $builder): void
 	{
@@ -24,6 +28,6 @@ class TablePresenter extends AbstractTablePresenter
 			ARRAY_FILTER_USE_KEY
 		);
 
-		$this->renderer->render($data);
+		$this->display($data);
 	}
 }

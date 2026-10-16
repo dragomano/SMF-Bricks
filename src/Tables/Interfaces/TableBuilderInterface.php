@@ -3,8 +3,6 @@
 namespace Bugo\Bricks\Tables\Interfaces;
 
 use Bugo\Bricks\BuilderInterface;
-use Bugo\Bricks\Tables\Column;
-use Bugo\Bricks\Tables\Row;
 
 interface TableBuilderInterface extends BuilderInterface
 {
@@ -39,7 +37,7 @@ interface TableBuilderInterface extends BuilderInterface
 	 */
 	public function addColumns(array $columns, ?string $class = null, ?string $style = null): static;
 
-	public function addColumn(Column $column): static;
+	public function addColumn(ColumnInterface $column): static;
 
 	public function removeColumn(string $name): static;
 
@@ -62,5 +60,5 @@ interface TableBuilderInterface extends BuilderInterface
 	 */
 	public function addRows(array $rows, ?string $class = null, ?string $style = null): static;
 
-	public function addRow(Row $row, ?string $class = null): static;
+	public function addRow(RowInterface $row, ?string $class = null): static;
 }

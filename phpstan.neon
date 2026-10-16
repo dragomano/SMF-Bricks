@@ -6,9 +6,3 @@ parameters:
 	# The library validates input at runtime, so PHPDoc types are treated as hints,
 	# not as guarantees (otherwise defensive checks look like dead code).
 	treatPhpDocTypesAsCertain: false
-
-includes:
-	# Known debt: mainly missing iterable value types in @param/@return annotations.
-	# The new.static reports are intentional: subclasses (e.g. Light Portal's
-	# PortalTableBuilder) rely on make() keeping late static binding.
-	- phpstan-baseline.neon

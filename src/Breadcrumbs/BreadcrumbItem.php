@@ -72,6 +72,6 @@ class BreadcrumbItem implements BreadcrumbItemInterface
 			'url'    => $this->getUrl(),
 			'before' => $this->getBefore(),
 			'after'  => $this->getAfter(),
-		]);
+		], static fn($value) => $value !== null && $value !== '');
 	}
 }
