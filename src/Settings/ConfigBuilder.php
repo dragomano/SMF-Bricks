@@ -59,6 +59,10 @@ class ConfigBuilder implements ConfigBuilderInterface
 	 */
 	public function build(): array
 	{
-		return array_map(fn(ConfigInterface $var) => $var->toArray() ?: '', $this->vars);
+		return array_map(static function (ConfigInterface $var): array|string {
+			$data = $var->toArray();
+
+			return $data === [] ? '' : $data;
+		}, $this->vars);
 	}
 }

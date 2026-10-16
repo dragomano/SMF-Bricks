@@ -14,11 +14,12 @@ beforeEach(function () {
 
 it('can set table options', function () {
 	$params = [
-		'items_per_page' => 10,
-		'no_items_label' => 'No items',
-		'base_href' => 'https://some.url',
+		'items_per_page'   => 10,
+		'no_items_label'   => 'No items',
+		'base_href'        => 'https://some.url',
 		'default_sort_col' => 'id',
 	];
+
 	$this->builder->withParams(...array_values($params));
 
 	$tableData = $this->builder->build();
@@ -54,11 +55,9 @@ it('can validate columns on adding', function () {
 
 it('can remove a column from the table', function () {
 	$this->builder->addColumn(IdColumn::make());
-
 	expect($this->builder->build()['columns'])->toHaveCount(1);
 
 	$this->builder->removeColumn('id');
-
 	expect($this->builder->build()['columns'])->toHaveCount(0);
 });
 
@@ -118,11 +117,9 @@ it('can set count from number', function () {
 
 it('can set javascript', function () {
 	$this->builder->setScript('console.log("Hello!")');
-
 	expect($this->builder->build()['javascript'])->toBe('console.log("Hello!")');
 
 	$this->builder->removeScript();
-
 	expect($this->builder->build())->not->toHaveKey('javascript');
 });
 

@@ -6,8 +6,8 @@ use Nette\Utils\Html;
 
 beforeEach(function () {
 	$this->button = Html::el('input', [
-		'type' => 'submit',
-		'name' => 'button_name',
+		'type'  => 'submit',
+		'name'  => 'button_name',
 		'value' => 'Some title',
 	])->toHtml();
 
@@ -21,6 +21,6 @@ it('can set a style for the row', function () {
 it('returns all row data as an array', function () {
 	expect($this->row->toArray())->toMatchArray([
 		'position' => RowPosition::BELOW_TABLE_DATA->name(),
-		'value' => $this->button,
+		'value'    => $this->button,
 	]);
 });

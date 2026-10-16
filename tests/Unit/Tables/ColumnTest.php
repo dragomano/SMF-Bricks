@@ -75,7 +75,7 @@ it('provides header aliases without changing data cell attributes', function () 
 
 	expect($column->toArray())->toBe([
 		'header' => ['value' => 'Name', 'class' => 'header', 'style' => 'width: 20%'],
-		'data' => ['db' => 'name', 'class' => 'cell', 'style' => 'text-align: right'],
+		'data'   => ['db' => 'name', 'class' => 'cell', 'style' => 'text-align: right'],
 	]);
 });
 

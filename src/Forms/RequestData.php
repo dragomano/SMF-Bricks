@@ -2,6 +2,8 @@
 
 namespace Bugo\Bricks\Forms;
 
+use function is_string;
+
 /**
  * Minimal snapshot of the request data used to fill in form field values.
  */
@@ -17,7 +19,9 @@ final readonly class RequestData
 
 	public static function fromGlobals(): self
 	{
-		return new self($_SERVER['REQUEST_METHOD'] ?? 'GET', $_POST);
+		$method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
+
+		return new self(is_string($method) ? $method : 'GET', $_POST);
 	}
 
 	public function isPost(): bool

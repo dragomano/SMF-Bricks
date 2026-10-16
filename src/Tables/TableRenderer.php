@@ -3,9 +3,11 @@
 namespace Bugo\Bricks\Tables;
 
 use Bugo\Bricks\StringRendererInterface;
+use InvalidArgumentException;
 use Nette\Utils\Html;
 use Stringable;
 
+use function is_array;
 use function is_scalar;
 
 class TableRenderer implements StringRendererInterface
@@ -27,47 +29,66 @@ class TableRenderer implements StringRendererInterface
 		if (isset($data['title'])) {
 			$div = Html::el('div')->class('cat_bar');
 			$h3  = Html::el('h3')->class('cat' . 'bg');
+
 			$form->addHtml($div->addHtml($this->fill($h3, $data['title'])));
 		}
 
-		$table = Html::el('table')->id($data['id']);
+		$table = Html::el('table', ['id' => $data['id']]);
 		$tr    = Html::el('tr');
 
-		if (! empty($data['headers'])) {
-			foreach ($data['headers'] as $header) {
-				$th = Html::el('th');
-				$th->id($header['id']);
-				$th->class($header['class'] ?? null);
-				$th->style($header['style'] ?? null);
+		$headers = $data['headers'] ?? [];
+		$rows    = $data['rows'] ?? [];
 
-				$tr->addHtml($this->fill($th, $header['label']));
+		if (! is_array($headers) || ! is_array($rows)) {
+			throw new InvalidArgumentException('Table headers and rows must be arrays');
+		}
+
+		foreach ($headers as $header) {
+			if (! is_array($header)) {
+				throw new InvalidArgumentException('Table headers must contain arrays');
 			}
+
+			$th = Html::el('th', [
+				'id'    => $header['id'],
+				'class' => $header['class'] ?? null,
+				'style' => $header['style'] ?? null,
+			]);
+
+			$tr->addHtml($this->fill($th, $header['label']));
 		}
 
 		$table->addHtml($tr);
 
-		if (! empty($data['rows'])) {
-			foreach ($data['rows'] as $row) {
-				$rowData = $row['data'];
-				$tr      = Html::el('tr');
-				$tr->class('window' . 'bg');
+		foreach ($rows as $row) {
+			if (! is_array($row) || ! isset($row['data']) || ! is_array($row['data'])) {
+				throw new InvalidArgumentException('Table rows must contain a data array');
+			}
 
-				foreach ($rowData as $cell) {
-					$td = Html::el('td');
-					$td->class($cell['class'] ?? null);
-					$td->style($cell['style'] ?? null);
+			$rowData = $row['data'];
 
-					$tr->addHtml($this->fill($td, $cell['value'] ?? ''));
+			$tr = Html::el('tr');
+			$tr->class('window' . 'bg');
+
+			foreach ($rowData as $cell) {
+				if (! is_array($cell)) {
+					throw new InvalidArgumentException('Table cells must be arrays');
 				}
 
-				$table->addHtml($tr);
+				$td = Html::el('td', [
+					'class' => $cell['class'] ?? null,
+					'style' => $cell['style'] ?? null,
+				]);
+
+				$tr->addHtml($this->fill($td, $cell['value'] ?? ''));
 			}
+
+			$table->addHtml($tr);
 		}
 
 		$form->addHtml($table);
 		$root->addHtml($form);
 
-		if (! empty($data['javascript'])) {
+		if ((bool) ($data['javascript'] ?? false)) {
 			$root->addHtml(Html::el('script')->setText($data['javascript']));
 		}
 

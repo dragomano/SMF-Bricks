@@ -24,9 +24,11 @@ it('accepts independent item implementations through builder contracts', functio
 	bool $storesObject = false
 ) {
 	$parameter = (new ReflectionMethod($builderInterface, $method))->getParameters()[0];
+
 	$item = mock($itemInterface);
 	$item->shouldReceive('getName')->andReturn('custom');
 	$item->shouldReceive('toArray')->andReturn(['name' => 'custom']);
+
 	$builder = $makeBuilder();
 
 	expect((string) $parameter->getType())->toBe($itemInterface)
@@ -40,10 +42,10 @@ it('accepts independent item implementations through builder contracts', functio
 
 	expect($actual)->toBe($storesObject ? $item : ['name' => 'custom']);
 })->with([
-	'fields' => [FormBuilderInterface::class, fn() => FormBuilder::make('form'), 'addField', FieldInterface::class, ['fields', 'custom'], true],
-	'buttons' => [FormBuilderInterface::class, fn() => FormBuilder::make('form'), 'addButton', ButtonInterface::class, ['buttons', 'custom'], true],
-	'columns' => [TableBuilderInterface::class, fn() => TableBuilder::make('table', 'Table'), 'addColumn', ColumnInterface::class, ['columns', 'custom']],
-	'rows' => [TableBuilderInterface::class, fn() => TableBuilder::make('table', 'Table'), 'addRow', RowInterface::class, ['additional_rows', 0]],
+	'fields'      => [FormBuilderInterface::class, fn() => FormBuilder::make('form'), 'addField', FieldInterface::class, ['fields', 'custom'], true],
+	'buttons'     => [FormBuilderInterface::class, fn() => FormBuilder::make('form'), 'addButton', ButtonInterface::class, ['buttons', 'custom'], true],
+	'columns'     => [TableBuilderInterface::class, fn() => TableBuilder::make('table', 'Table'), 'addColumn', ColumnInterface::class, ['columns', 'custom']],
+	'rows'        => [TableBuilderInterface::class, fn() => TableBuilder::make('table', 'Table'), 'addRow', RowInterface::class, ['additional_rows', 0]],
 	'breadcrumbs' => [BreadcrumbBuilderInterface::class, fn() => BreadcrumbBuilder::make(), 'addItem', BreadcrumbItemInterface::class, [0]],
-	'config' => [ConfigBuilderInterface::class, fn() => ConfigBuilder::make(), 'addVar', ConfigInterface::class, [0]],
+	'config'      => [ConfigBuilderInterface::class, fn() => ConfigBuilder::make(), 'addVar', ConfigInterface::class, [0]],
 ]);

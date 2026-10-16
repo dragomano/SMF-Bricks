@@ -4,8 +4,10 @@ namespace Bugo\Bricks\Forms;
 
 use Bugo\Bricks\Forms\Interfaces\FieldInterface;
 use Bugo\Bricks\HasShortMethods;
+use InvalidArgumentException;
 
 use function array_merge;
+use function is_string;
 
 /**
  * @method self id(string $id)
@@ -104,7 +106,13 @@ class Field implements FieldInterface
 
 	public function getName(): string
 	{
-		return $this->attributes['name'];
+		$name = $this->attributes['name'];
+
+		if (! is_string($name)) {
+			throw new InvalidArgumentException('The field name must be a string');
+		}
+
+		return $name;
 	}
 
 	public function getValue(): mixed
@@ -114,7 +122,13 @@ class Field implements FieldInterface
 
 	public function getType(): string
 	{
-		return $this->attributes['type'];
+		$type = $this->attributes['type'] ?? null;
+
+		if (! is_string($type)) {
+			throw new InvalidArgumentException('The field type must be a string');
+		}
+
+		return $type;
 	}
 
 	/**

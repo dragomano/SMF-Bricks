@@ -22,7 +22,12 @@ class Column implements ColumnInterface
 {
 	use HasShortMethods;
 
-	/** @var array<string, mixed> */
+	/**
+	 * @var array{
+	 *     header?: array{value?: string, class?: string, style?: string},
+	 *     data?: array<string, mixed>, sort?: array{default: string, reverse: string}
+	 * }
+	 */
 	protected array $attributes = [];
 
 	protected function __construct(private readonly string $name, string $title)
@@ -84,11 +89,11 @@ class Column implements ColumnInterface
 			$this->attributes['data'] = $data;
 		}
 
-		if ($class) {
+		if ((bool) $class) {
 			$this->attributes['data']['class'] = $class;
 		}
 
-		if ($style) {
+		if ((bool) $style) {
 			$this->attributes['data']['style'] = $style;
 		}
 

@@ -2,6 +2,10 @@
 
 namespace Bugo\Bricks\Forms\Traits;
 
+use InvalidArgumentException;
+
+use function is_array;
+
 trait HasOptions
 {
 	/**
@@ -19,6 +23,12 @@ trait HasOptions
 	 */
 	public function getOptions(): array
 	{
-		return $this->attributes['options'];
+		$options = $this->attributes['options'] ?? [];
+
+		if (! is_array($options)) {
+			throw new InvalidArgumentException('The field options must be an array');
+		}
+
+		return $options;
 	}
 }

@@ -5,8 +5,11 @@ namespace Bugo\Bricks\Breadcrumbs;
 use Bugo\Bricks\Breadcrumbs\Interfaces\BreadcrumbBuilderInterface;
 use Bugo\Bricks\Breadcrumbs\Interfaces\BreadcrumbItemInterface;
 use InvalidArgumentException;
+use Stringable;
 
 use function get_debug_type;
+use function in_array;
+use function is_scalar;
 use function sprintf;
 
 /**
@@ -65,6 +68,14 @@ class BreadcrumbBuilder implements BreadcrumbBuilderInterface
 		if (! isset($this->items[$index]))
 			return $this;
 
+		if (! in_array($key, ['name', 'url', 'before', 'after'], true)) {
+			return $this;
+		}
+
+		if ($value !== null && ! is_scalar($value) && ! $value instanceof Stringable) {
+			throw new InvalidArgumentException('Breadcrumb values must be scalars, stringable objects or null');
+		}
+
 		$item = $this->items[$index];
 
 		$name   = $item->getName();
@@ -88,9 +99,6 @@ class BreadcrumbBuilder implements BreadcrumbBuilderInterface
 			case 'after':
 				$after = $value !== null ? (string) $value : null;
 				break;
-
-			default:
-				return $this;
 		}
 
 		// The item is rebuilt through its own factory, so a subclass keeps its class.

@@ -9,7 +9,7 @@ use Bugo\Bricks\Forms\HtmlFieldType;
 beforeEach(function () {
 	$this->field = RadioField::make('radio_field', 'Make your choice')
 		->setOptions([
-			'no' => 'No',
+			'no'  => 'No',
 			'yes' => 'Yes',
 		]);
 });
@@ -31,7 +31,7 @@ it('can set a value', function () {
 
 it('can return options', function () {
 	expect($this->field->getOptions())->toMatchArray([
-		'no' => 'No',
+		'no'  => 'No',
 		'yes' => 'Yes',
 	]);
 });

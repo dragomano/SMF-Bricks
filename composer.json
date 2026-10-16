@@ -34,9 +34,11 @@
     "nette/utils": "^4.0"
   },
   "require-dev": {
+    "infection/infection": "^0.31",
     "mockery/mockery": "^1.6.15",
     "pestphp/pest": "^3|^4|^5",
     "phpstan/phpstan": "^2.3",
+    "phpstan/phpstan-strict-rules": "^2.0",
     "rector/rector": "^2.6"
   },
   "scripts": {
@@ -46,7 +48,8 @@
     "test": "vendor/bin/pest --colors=always",
     "test-coverage": "vendor/bin/pest --colors=always --coverage --min=100",
     "test-coverage-clover": "vendor/bin/pest --colors=always --min=100 --coverage-clover coverage.xml",
-    "test-coverage-html": "vendor/bin/pest --colors=always --min=100 --coverage-html coverage"
+    "test-coverage-html": "vendor/bin/pest --colors=always --min=100 --coverage-html coverage",
+    "test-mutate": "@php vendor/bin/infection --threads=4 --show-mutations=20 --no-interaction"
   },
   "config": {
     "optimize-autoloader": true,
@@ -56,6 +59,7 @@
       "php": "8.2"
     },
     "allow-plugins": {
+      "infection/extension-installer": true,
       "pestphp/pest-plugin": true
     }
   }

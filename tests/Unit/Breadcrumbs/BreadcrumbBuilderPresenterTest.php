@@ -19,7 +19,7 @@ it('renders breadcrumbs correctly', function () {
 	$builder->shouldReceive('build')->andReturn($data);
 
 	ob_start();
-	$renderer = new BreadcrumbRenderer();
+	$renderer  = new BreadcrumbRenderer();
 	$presenter = new BreadcrumbPresenter($renderer);
 	$presenter->show($builder);
 	$output = ob_get_clean();

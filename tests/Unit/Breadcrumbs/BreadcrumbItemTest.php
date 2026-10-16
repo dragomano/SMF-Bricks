@@ -10,7 +10,7 @@ it('can create an item with a name and url', function () {
 	expect($this->item->getName())->toBe('Foo')
 		->and($this->item->toArray())->toMatchArray([
 			'name' => 'Foo',
-			'url' => '/bar',
+			'url'  => '/bar',
 		]);
 });
 

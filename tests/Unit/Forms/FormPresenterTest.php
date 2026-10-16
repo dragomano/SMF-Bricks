@@ -29,12 +29,12 @@ beforeEach(function () {
 			SelectField::make('select', 'Make your choice')
 				->setValue('yes')
 				->setOptions([
-					'no' => 'No',
+					'no'  => 'No',
 					'yes' => 'Yes',
 				]),
 			RadioField::make('radio', 'Are you ready?')
 				->setOptions([
-					'no' => 'No',
+					'no'  => 'No',
 					'yes' => 'Yes'
 				]),
 		])
@@ -124,11 +124,11 @@ it('throws InvalidArgumentException when SelectField options are missing', funct
 
 it('renders the form correctly with filled $_POST data', function () {
 	$_POST['username'] = 'John Doe';
-	$_POST['email'] = 'john@doe.com';
-	$_POST['check'] = 'on';
+	$_POST['email']    = 'john@doe.com';
+	$_POST['check']    = 'on';
 	$_POST['textarea'] = 'foo bar';
-	$_POST['select'] = 'no';
-	$_POST['radio'] = 'yes';
+	$_POST['select']   = 'no';
+	$_POST['radio']    = 'yes';
 
 	ob_start();
 	$this->presenter->show($this->builder);

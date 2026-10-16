@@ -1,0 +1,19 @@
+{
+    "$schema": "vendor/infection/infection/resources/schema.json",
+    "source": {
+        "directories": ["src"]
+    },
+    "timeout": 15,
+    "tmpDir": ".infection/tmp",
+    "phpUnit": {
+        "customPath": "tests/infection.php"
+    },
+    "logs": {
+        "text": ".infection/infection.log",
+        "json": ".infection/infection.json",
+        "summary": ".infection/summary.log"
+    },
+    "mutators": {
+        "@default": true
+    }
+}

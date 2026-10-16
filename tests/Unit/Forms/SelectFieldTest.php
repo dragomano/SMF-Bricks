@@ -11,7 +11,7 @@ beforeEach(function () {
 	$this->field = SelectField::make('select_field', 'Make your choice')
 		->setValue('yes')
 		->setOptions([
-			'no' => 'No',
+			'no'  => 'No',
 			'yes' => 'Yes',
 		]);
 });
@@ -33,7 +33,7 @@ it('can set a value', function () {
 
 it('can return options', function () {
 	expect($this->field->getOptions())->toMatchArray([
-		'no' => 'No',
+		'no'  => 'No',
 		'yes' => 'Yes',
 	]);
 });

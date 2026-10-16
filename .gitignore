@@ -1,10 +1,12 @@
 .idea/
+.infection/
 .phpstan.cache/
 .phpunit.cache/
 .vscode/
 composer.lock
 coverage.xml
 coverage/
+infection.json5
 vendor/
 
 audit_baseline_*.txt

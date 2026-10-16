@@ -7,11 +7,14 @@ use Bugo\Bricks\Forms\Interfaces\FieldInterface;
 use Bugo\Bricks\StringRendererInterface;
 use InvalidArgumentException;
 use Nette\Utils\Html;
+use Stringable;
 
 use function array_filter;
 use function get_debug_type;
 use function in_array;
 use function is_array;
+use function is_scalar;
+use function is_string;
 use function sprintf;
 
 use const ARRAY_FILTER_USE_KEY;
@@ -38,15 +41,14 @@ class FormRenderer implements StringRendererInterface
 	public function render(array $data): string
 	{
 		$request = $this->request ?? RequestData::fromGlobals();
-
-		$form = Html::el('form', ['accept-charset' => 'utf-8']);
+		$form    = Html::el('form', ['accept-charset' => 'utf-8']);
 
 		$this->prepareForm($form, $data, $request);
 
 		$result = (string) $form;
 
-		if (! empty($data['script'])) {
-			$result .= (string) Html::el('script')->addHtml($data['script']);
+		if ((bool) ($data['script'] ?? false)) {
+			$result .= (string) Html::el('script')->setHtml($this->htmlText($data['script']));
 		}
 
 		return $result;
@@ -57,20 +59,23 @@ class FormRenderer implements StringRendererInterface
 	 */
 	private function prepareForm(Html $form, array $data, RequestData $request): void
 	{
-		$form
-			->id($data['id'])
-            ->name($data['name'] ?? $data['id'])
-			->action($data['action'] ?? null)
-			->method($data['method'] ?? null)
-			->enctype($data['enctype'] ?? null)
-			->class($data['class'] ?? null)
-			->style($data['style'] ?? null)
-			->target($data['target'] ?? null);
+		$form->addAttributes([
+			'id'      => $data['id'],
+			'name'    => $data['name'] ?? $data['id'],
+			'action'  => $data['action'] ?? null,
+			'method'  => $data['method'] ?? null,
+			'enctype' => $data['enctype'] ?? null,
+			'class'   => $data['class'] ?? null,
+			'style'   => $data['style'] ?? null,
+			'target'  => $data['target'] ?? null,
+		]);
 
-		$data['title'] && $form->addHtml(
-			Html::el('div', ['class' => 'cat_bar'])
-				->addHtml(Html::el('h3', ['class' => 'cat' . 'bg'])->setText($data['title']))
-		);
+		if ((bool) $data['title']) {
+			$form->addHtml(
+				Html::el('div', ['class' => 'cat_bar'])
+					->addHtml(Html::el('h3', ['class' => 'cat' . 'bg'])->setText($data['title']))
+			);
+		}
 
 		$body = Html::el();
 
@@ -87,7 +92,13 @@ class FormRenderer implements StringRendererInterface
 	 */
 	private function prepareFields(Html $body, array $data, RequestData $request): void
 	{
-		foreach ($data['fields'] ?? [] as $field) {
+		$fields = $data['fields'] ?? [];
+
+		if (! is_array($fields)) {
+			throw new InvalidArgumentException('Form fields must be an array');
+		}
+
+		foreach ($fields as $field) {
 			if ($field instanceof FieldInterface) {
 				$body->addHtml($this->renderField($field->toArray(), $request));
 
@@ -102,7 +113,7 @@ class FormRenderer implements StringRendererInterface
 				));
 			}
 
-			$body->addHtml($this->renderContainer('field', $field['class'] ?? '', $field['fields'], $request));
+			$body->addHtml($this->renderContainer('field', $this->htmlText($field['class'] ?? ''), $field['fields'], $request));
 		}
 	}
 
@@ -111,10 +122,13 @@ class FormRenderer implements StringRendererInterface
 	 */
 	private function prepareButtons(Html $body, array $data, RequestData $request): void
 	{
-		if (empty($data['buttons']))
-			return;
+		$buttons = $data['buttons'] ?? [];
 
-		foreach ($data['buttons'] as $button) {
+		if (! is_array($buttons)) {
+			throw new InvalidArgumentException('Form buttons must be an array');
+		}
+
+		foreach ($buttons as $button) {
 			if ($button instanceof ButtonInterface) {
 				$body->addHtml($this->renderButton($button->toArray()));
 
@@ -129,12 +143,12 @@ class FormRenderer implements StringRendererInterface
 				));
 			}
 
-			$body->addHtml($this->renderContainer('button', $button['class'] ?? '', $button['buttons'], $request));
+			$body->addHtml($this->renderContainer('button', $this->htmlText($button['class'] ?? ''), $button['buttons'], $request));
 		}
 	}
 
 	/**
-	 * @param array<int, mixed> $elements
+	 * @param array<int|string, mixed> $elements
 	 */
 	private function renderContainer(string $type, string $class, array $elements, RequestData $request): Html
 	{
@@ -162,11 +176,11 @@ class FormRenderer implements StringRendererInterface
 	 */
 	private function renderField(array $field, RequestData $request): Html
 	{
-		if (! isset($field['type'], $field['name'])) {
+		if (! isset($field['type'], $field['name']) || ! is_string($field['type']) || ! is_string($field['name'])) {
 			throw new InvalidArgumentException('The field data must contain the "type" and "name" keys');
 		}
 
-		$text = (string) ($field['label'] ?? '');
+		$text = $this->htmlText($field['label'] ?? '');
 
 		unset($field['label']);
 
@@ -181,7 +195,7 @@ class FormRenderer implements StringRendererInterface
 			$result = $this->prepareSelectOptions($field);
 		}
 
-		if (in_array($field['type'], [HtmlFieldType::SELECT->value, HtmlFieldType::TEXTAREA->value])) {
+		if (in_array($field['type'], [HtmlFieldType::SELECT->value, HtmlFieldType::TEXTAREA->value], true)) {
 			$result->type(null);
 		}
 
@@ -201,7 +215,7 @@ class FormRenderer implements StringRendererInterface
 			->addHtml(Html::el('dt')
 				->addHtml(Html::el('label', $text)
 					->class('strong')
-					->for($field['id'] ?? $field['name'])))
+					->setAttribute('for', $field['id'] ?? $field['name'])))
 			->addHtml(Html::el('dd')->addHtml($result));
 	}
 
@@ -214,17 +228,18 @@ class FormRenderer implements StringRendererInterface
 			throw new InvalidArgumentException('The button data must contain the "name" key');
 		}
 
-		return Html::el('input')
-			->id($button['id'] ?? null)
-			->name($button['name'])
-			->value($button['value'] ?? null)
-			->class($button['class'] ?? null)
-			->style($button['style'] ?? null)
-			->type($button['type'] ?? null);
+		return Html::el('input', [
+			'id'    => $button['id'] ?? null,
+			'name'  => $button['name'],
+			'value' => $button['value'] ?? null,
+			'class' => $button['class'] ?? null,
+			'style' => $button['style'] ?? null,
+			'type'  => $button['type'] ?? null,
+		]);
 	}
 
 	/**
-	 * @param array<string, mixed> $field
+	 * @param array<string, mixed>&array{type: string, name: string} $field
 	 */
 	private function populateFieldValue(Html $result, array &$field, RequestData $request): void
 	{
@@ -240,10 +255,10 @@ class FormRenderer implements StringRendererInterface
 
 		if ($field['type'] === HtmlFieldType::TEXTAREA->value) {
 			$result->setText($request->post[$field['name']]);
-		} elseif (in_array($field['type'], [HtmlFieldType::RADIO->value, HtmlFieldType::SELECT->value])) {
+		} elseif (in_array($field['type'], [HtmlFieldType::RADIO->value, HtmlFieldType::SELECT->value], true)) {
 			$field['selected'] = $request->post[$field['name']];
 		} else {
-			$result->value($request->post[$field['name']]);
+			$result->setAttribute('value', $request->post[$field['name']]);
 		}
 	}
 
@@ -252,24 +267,26 @@ class FormRenderer implements StringRendererInterface
 	 */
 	private function prepareRadioOptions(array $field): Html
 	{
-		if (empty($field['options'])) {
+		$options = $field['options'] ?? [];
+
+		if (! is_array($options) || $options === []) {
 			throw new InvalidArgumentException('The radio field options are missing');
 		}
 
 		$result = new Html();
-		foreach ($field['options'] as $key => $value) {
+		foreach ($options as $key => $value) {
 			$selected = $field['selected'] ?? false;
 
 			$result->addHtml(
 				Html::el('label')
 					->addHtml(
 						Html::el('input')
-							->name($field['name'])
-							->value($key)
+							->setAttribute('name', $field['name'])
+							->setAttribute('value', $key)
 							->type(HtmlFieldType::RADIO->value)
 							->checked($selected === $key)
 					)
-					->addText(' ' . $value)
+					->addText(' ' . $this->htmlText($value))
 			);
 		}
 
@@ -281,7 +298,9 @@ class FormRenderer implements StringRendererInterface
 	 */
 	private function prepareSelectOptions(array $field): Html
 	{
-		if (empty($field['options'])) {
+		$options = $field['options'] ?? [];
+
+		if (! is_array($options) || $options === []) {
 			throw new InvalidArgumentException('The select field options are missing');
 		}
 
@@ -289,23 +308,39 @@ class FormRenderer implements StringRendererInterface
 			HtmlFieldType::SELECT->value,
 			array_filter(
 				$field,
-				fn($key) => ! in_array($key, ['value', 'selected', 'options', 'type']),
+				fn($key) => ! in_array($key, ['value', 'selected', 'options', 'type'], true),
 				ARRAY_FILTER_USE_KEY
 			)
 		);
 
-		$result->name($field['name']);
-
-		foreach ($field['options'] as $key => $value) {
+		foreach ($options as $key => $value) {
 			$selected = $field['selected'] ?? false;
+			$option = Html::el('option');
+
+			if (is_array($value)) {
+				foreach ($value as $attribute => $attributeValue) {
+					$option->setAttribute((string) $attribute, $attributeValue);
+				}
+			} else {
+				$option->setText($this->htmlText($value));
+			}
 
 			$result->addHtml(
-				Html::el('option', $value)
-					->value($key)
+				$option
+					->setAttribute('value', $key)
 					->selected($selected === $key)
 			);
 		}
 
 		return $result;
+	}
+
+	private function htmlText(mixed $value): string
+	{
+		if ($value === null || is_scalar($value) || $value instanceof Stringable) {
+			return (string) $value;
+		}
+
+		throw new InvalidArgumentException('HTML text must be a scalar, stringable object or null');
 	}
 }

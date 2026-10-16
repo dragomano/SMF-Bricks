@@ -34,7 +34,7 @@ describe('updates', function () {
 		expect($this->builder->build())->toBe([
 			[
 				'name' => 'Foo',
-				'url' => '/bar',
+				'url'  => '/bar',
 			]
 		]);
 	});
@@ -45,7 +45,7 @@ describe('updates', function () {
 
 		expect($this->builder->build()[0])->toBe([
 			'name' => 'Bar',
-			'url' => '/bar',
+			'url'  => '/bar',
 		]);
 	});
 
@@ -55,7 +55,7 @@ describe('updates', function () {
 
 		expect($this->builder->build()[0])->toBe([
 			'name' => 'Foo',
-			'url' => '/foo',
+			'url'  => '/foo',
 		]);
 	});
 
@@ -64,8 +64,8 @@ describe('updates', function () {
 		$this->builder->update(0, 'before', 'extra');
 
 		expect($this->builder->build()[0])->toBe([
-			'name' => 'Foo',
-			'url' => '/bar',
+			'name'   => 'Foo',
+			'url'    => '/bar',
 			'before' => 'extra',
 		]);
 	});
@@ -75,8 +75,8 @@ describe('updates', function () {
 		$this->builder->update(0, 'after', 'extra');
 
 		expect($this->builder->build()[0])->toBe([
-			'name' => 'Foo',
-			'url' => '/bar',
+			'name'  => 'Foo',
+			'url'   => '/bar',
 			'after' => 'extra',
 		]);
 	});
@@ -87,7 +87,7 @@ describe('updates', function () {
 
 		expect($this->builder->build()[0])->toBe([
 			'name' => 'Foo',
-			'url' => '/bar',
+			'url'  => '/bar',
 		]);
 	});
 });
@@ -101,11 +101,9 @@ it('can get an item by index', function () {
 
 it('can remove an item', function () {
 	$this->builder->add('Foo', '/bar');
-
 	expect($this->builder->build())->toHaveCount(1);
 
 	$this->builder->remove(0);
-
 	expect($this->builder->build())->toHaveCount(0);
 });
 
@@ -131,7 +129,8 @@ it('updates every supported property through the item factory', function (string
 			parent::__construct($name, $url, $before, $after);
 		}
 	};
-	$builder = BreadcrumbBuilder::make()->addItem($item);
+
+	$builder  = BreadcrumbBuilder::make()->addItem($item);
 	$expected = $item->toArray();
 	$expected[$key] = $value;
 
@@ -140,10 +139,10 @@ it('updates every supported property through the item factory', function (string
 		->and($builder->getByIndex(0))->toBe($expected)
 		->and($item->toArray())->toBe(['name' => 'Original', 'url' => '/original', 'before' => 'Before', 'after' => 'After']);
 })->with([
-	'name' => ['name', 'Updated'],
-	'url' => ['url', '/updated'],
+	'name'   => ['name', 'Updated'],
+	'url'    => ['url', '/updated'],
 	'before' => ['before', 'Updated before'],
-	'after' => ['after', 'Updated after'],
+	'after'  => ['after', 'Updated after'],
 ]);
 
 it('can clear nullable breadcrumb properties', function (string $key) {

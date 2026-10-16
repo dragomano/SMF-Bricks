@@ -28,11 +28,20 @@ class FormBuilder implements FormBuilderInterface
 {
 	use HasShortMethods;
 
-	/** @var array<string, mixed> */
-	private array $attributes = [];
+	/**
+	 * @var array{
+	 *     id: string, title: string, name?: string, action?: string, method?: string,
+	 *     class?: string, style?: string, target?: string, enctype?: string, script?: string, body_class?: string,
+	 *     fields?: array<int|string, FieldInterface|array{type: string, class: string, fields: list<FieldInterface>}>,
+	 *     buttons?: array<int|string, ButtonInterface|array{type: string, class: string, buttons: list<ButtonInterface>}>
+	 * }
+	 */
+	private array $attributes;
 
 	protected function __construct(string $id, string $title = '')
 	{
+		$this->attributes = ['id' => $id, 'title' => $title];
+
 		$this->setId($id);
 		$this->setTitle($title);
 		$this->setMethod();
@@ -106,23 +115,23 @@ class FormBuilder implements FormBuilderInterface
 		?string $class = null,
 		?string $target = null
 	): static {
-		if ($action) {
+		if ((bool) $action) {
 			$this->setAction($action);
 		}
 
-		if ($method) {
+		if ((bool) $method) {
 			$this->setMethod($method);
 		}
 
-		if ($multipart) {
+		if ($multipart === true) {
 			$this->attributes['enctype'] = 'multipart/form-data';
 		}
 
-		if ($class) {
+		if ((bool) $class) {
 			$this->setClass($class);
 		}
 
-		if ($target) {
+		if ((bool) $target) {
 			$this->setTarget($target);
 		}
 
@@ -146,7 +155,10 @@ class FormBuilder implements FormBuilderInterface
 				);
 			}
 
-			$fieldClass && $field->setClass($fieldClass);
+			if ((bool) $fieldClass) {
+				$field->setClass($fieldClass);
+			}
+
 			$children[] = $field;
 		}
 
@@ -177,14 +189,16 @@ class FormBuilder implements FormBuilderInterface
 		unset($this->attributes['fields'][$name]);
 
 		foreach ($this->attributes['fields'] ?? [] as $key => $container) {
-			if (! is_array($container) || empty($container['fields']) || ! is_array($container['fields'])) {
+			if (! is_array($container)) {
 				continue;
 			}
 
-			$this->attributes['fields'][$key]['fields'] = array_values(array_filter(
+			$container['fields'] = array_values(array_filter(
 				$container['fields'],
-				static fn($field) => ! $field instanceof FieldInterface || $field->getName() !== $name
+				static fn(FieldInterface $field) => $field->getName() !== $name
 			));
+
+			$this->attributes['fields'][$key] = $container;
 		}
 
 		return $this;
@@ -207,7 +221,10 @@ class FormBuilder implements FormBuilderInterface
 				);
 			}
 
-			$buttonClass && $button->setClass($buttonClass);
+			if ((bool) $buttonClass) {
+				$button->setClass($buttonClass);
+			}
+
 			$children[] = $button;
 		}
 
@@ -238,14 +255,16 @@ class FormBuilder implements FormBuilderInterface
 		unset($this->attributes['buttons'][$name]);
 
 		foreach ($this->attributes['buttons'] ?? [] as $key => $container) {
-			if (! is_array($container) || empty($container['buttons']) || ! is_array($container['buttons'])) {
+			if (! is_array($container)) {
 				continue;
 			}
 
-			$this->attributes['buttons'][$key]['buttons'] = array_values(array_filter(
+			$container['buttons'] = array_values(array_filter(
 				$container['buttons'],
-				static fn($button) => ! $button instanceof ButtonInterface || $button->getName() !== $name
+				static fn(ButtonInterface $button) => $button->getName() !== $name
 			));
+
+			$this->attributes['buttons'][$key] = $container;
 		}
 
 		return $this;

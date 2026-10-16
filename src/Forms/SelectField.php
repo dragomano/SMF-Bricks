@@ -9,9 +9,12 @@ use Bugo\Bricks\Forms\Traits\HasMultipleAttribute;
 use Bugo\Bricks\Forms\Traits\HasOptions;
 use Bugo\Bricks\Forms\Traits\HasSelectedAttribute;
 use Bugo\Bricks\Forms\Traits\HasSizeAttribute;
+use InvalidArgumentException;
+use Stringable;
 
 use function implode;
 use function is_array;
+use function is_scalar;
 
 class SelectField extends Field implements OptionProviderInterface, SelectableInterface, SizeableInterface
 {
@@ -62,8 +65,19 @@ class SelectField extends Field implements OptionProviderInterface, SelectableIn
 	 */
 	private function normalizeValue(mixed $value): string|array
 	{
-		if (empty($this->attributes['multiple'])) {
-			return is_array($value) ? implode(',', $value) : (string) $value;
+		if (($this->attributes['multiple'] ?? false) !== true) {
+			$values = is_array($value) ? $value : [$value];
+			$parts  = [];
+
+			foreach ($values as $part) {
+				if ($part !== null && ! is_scalar($part) && ! $part instanceof Stringable) {
+					throw new InvalidArgumentException('Select values must be scalars, stringable objects or null');
+				}
+
+				$parts[] = (string) $part;
+			}
+
+			return implode(',', $parts);
 		}
 
 		return (array) $value;

@@ -1,13 +1,7 @@
 parameters:
 	ignoreErrors:
 		-
-			message: '#^Unsafe usage of new static\(\)\.$#'
-			identifier: new.static
-			count: 1
-			path: src/Tables/Column.php
-
-		-
-			message: '#^Unsafe usage of new static\(\)\.$#'
-			identifier: new.static
-			count: 1
-			path: src/Tables/Row.php
+			message: '#^Variable method call on \$this\(Bugo\\Bricks\\(?:Forms|Tables)\\(?:Button|Field|FormBuilder|Column|Row|TableBuilder)\)\.$#'
+			identifier: method.dynamicName
+			count: 6
+			path: src/HasShortMethods.php

@@ -4,10 +4,12 @@ namespace Bugo\Bricks\Forms;
 
 use Bugo\Bricks\Forms\Interfaces\ButtonInterface;
 use Bugo\Bricks\HasShortMethods;
+use InvalidArgumentException;
 use Stringable;
 
 use function array_merge;
 use function is_scalar;
+use function is_string;
 
 /**
  * @method self id(string $id)
@@ -85,7 +87,13 @@ class Button implements ButtonInterface
 
 	public function getName(): string
 	{
-		return $this->attributes['name'];
+		$name = $this->attributes['name'];
+
+		if (! is_string($name)) {
+			throw new InvalidArgumentException('The button name must be a string');
+		}
+
+		return $name;
 	}
 
 	public function getValue(): string
@@ -97,7 +105,13 @@ class Button implements ButtonInterface
 
 	public function getType(): string
 	{
-		return $this->attributes['type'];
+		$type = $this->attributes['type'];
+
+		if (! is_string($type)) {
+			throw new InvalidArgumentException('The button type must be a string');
+		}
+
+		return $type;
 	}
 
 	/**

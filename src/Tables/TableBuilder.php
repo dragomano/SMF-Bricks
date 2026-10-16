@@ -15,6 +15,7 @@ use function filter_var;
 use function get_debug_type;
 use function is_array;
 use function is_callable;
+use function is_scalar;
 use function sprintf;
 use function str_contains;
 use function str_starts_with;
@@ -33,11 +34,21 @@ class TableBuilder implements TableBuilderInterface
 {
 	use HasShortMethods;
 
-	/** @var array<string, mixed> */
-	private array $attributes = [];
+	/**
+	 * @var array{
+	 *     id: string, title: string, items_per_page?: int, no_items_label?: string,
+	 *     base_href?: string, default_sort_col?: string, form?: array<string, mixed>,
+	 *     get_items?: array<string, mixed>, get_count?: array<string, mixed>,
+	 *     columns?: array<string, array<string, mixed>>, additional_rows?: list<array<string, mixed>>,
+	 *     javascript?: string
+	 * }
+	 */
+	private array $attributes;
 
 	protected function __construct(string $id, string $title)
 	{
+		$this->attributes = ['id' => $id, 'title' => $title];
+
 		$this->setId($id);
 		$this->setTitle($title);
 		$this->paginate();
@@ -153,13 +164,15 @@ class TableBuilder implements TableBuilderInterface
 	 */
 	public function setCount(mixed $count, array $params = []): static
 	{
-		$type = match (true) {
-			is_callable($count) => 'callable',
-			is_array($count) => 'array',
-			default => 'value',
-		};
-
-		$this->attributes['get_count'] = $this->resolveCountAttribute($type, $count, $params);
+		if (is_callable($count)) {
+			$this->attributes['get_count'] = ['function' => $count, 'params' => $params];
+		} elseif (is_array($count)) {
+			$this->attributes['get_count'] = ['function' => static fn() => count($count), 'params' => $params];
+		} elseif ($count === null || is_scalar($count)) {
+			$this->attributes['get_count'] = ['value' => (int) $count, 'params' => $params];
+		} else {
+			throw new InvalidArgumentException('Count must be a callable, array, scalar or null');
+		}
 
 		return $this;
 	}
@@ -180,8 +193,14 @@ class TableBuilder implements TableBuilderInterface
 				);
 			}
 
-			$class && $column->setClass($class);
-			$style && $column->setStyle($style);
+			if ((bool) $class) {
+				$column->setClass($class);
+			}
+
+			if ((bool) $style) {
+				$column->setStyle($style);
+			}
+
 			$this->addColumn($column);
 		}
 
@@ -217,8 +236,14 @@ class TableBuilder implements TableBuilderInterface
 	 */
 	public function addHiddenFields(array $fields): static
 	{
+		$hiddenFields = $this->attributes['form']['hidden_fields'] ?? [];
+
+		if (! is_array($hiddenFields)) {
+			throw new InvalidArgumentException('Hidden fields must be an array');
+		}
+
 		$this->attributes['form']['hidden_fields'] = array_merge(
-			$this->attributes['form']['hidden_fields'] ?? [], $fields
+			$hiddenFields, $fields
 		);
 
 		return $this;
@@ -254,8 +279,14 @@ class TableBuilder implements TableBuilderInterface
 				);
 			}
 
-			$class && $row->setClass($class);
-			$style && $row->setStyle($style);
+			if ((bool) $class) {
+				$row->setClass($class);
+			}
+
+			if ((bool) $style) {
+				$row->setStyle($style);
+			}
+
 			$this->addRow($row);
 		}
 
@@ -264,7 +295,9 @@ class TableBuilder implements TableBuilderInterface
 
 	public function addRow(RowInterface $row, ?string $class = null): static
 	{
-		$class && $row->setClass($class);
+		if ((bool) $class) {
+			$row->setClass($class);
+		}
 
 		$this->attributes['additional_rows'][] = $row->toArray();
 
@@ -304,26 +337,4 @@ class TableBuilder implements TableBuilderInterface
 			|| str_starts_with($action, '?');
 	}
 
-	/**
-	 * @param array<string, mixed> $params
-	 *
-	 * @return array<string, mixed>
-	 */
-	private function resolveCountAttribute(string $type, mixed $count, array $params): array
-	{
-		return match ($type) {
-			'callable' => [
-				'function' => $count,
-				'params'   => $params,
-			],
-			'array' => [
-				'function' => fn() => count($count),
-				'params'   => $params,
-			],
-			default => [
-				'value'  => (int) $count,
-				'params' => $params,
-			],
-		};
-	}
 }

@@ -28,12 +28,13 @@ it('returns markup without writing to the output', function (string $class, arra
 		->and($output)->toBe('');
 })->with([
 	'breadcrumbs' => [BreadcrumbRenderer::class, [['name' => 'Home']], '<a href="#">Home</a>'],
-	'forms' => [FormRenderer::class, ['id' => 'form_id', 'title' => 'Form', 'script' => 'initForm();'], '<script>initForm();</script>'],
-	'tables' => [TableRenderer::class, ['id' => 'table_id', 'javascript' => 'initTable();'], '<script>initTable();</script>'],
+	'forms'       => [FormRenderer::class, ['id' => 'form_id', 'title' => 'Form', 'script' => 'initForm();'], '<script>initForm();</script>'],
+	'tables'      => [TableRenderer::class, ['id' => 'table_id', 'javascript' => 'initTable();'], '<script>initTable();</script>'],
 ]);
 
 it('keeps presenters compatible with output renderers', function (string $presenterClass, string $builderInterface) {
 	$data = ['id' => 'example', 'columns' => []];
+
 	$builder = mock($builderInterface);
 	$builder->shouldReceive('build')->once()->andReturn($data);
 
@@ -63,6 +64,6 @@ it('keeps presenters compatible with output renderers', function (string $presen
 		->and($renderer->data)->toBe($data);
 })->with([
 	'breadcrumbs' => [BreadcrumbPresenter::class, BreadcrumbBuilderInterface::class],
-	'forms' => [FormPresenter::class, FormBuilderInterface::class],
-	'tables' => [TablePresenter::class, TableBuilderInterface::class],
+	'forms'       => [FormPresenter::class, FormBuilderInterface::class],
+	'tables'      => [TablePresenter::class, TableBuilderInterface::class],
 ]);

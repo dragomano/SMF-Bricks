@@ -3,11 +3,13 @@
 namespace Bugo\Bricks\Settings;
 
 use Bugo\Bricks\Settings\Interfaces\ConfigInterface;
+use InvalidArgumentException;
 
 use function array_filter;
 use function array_merge;
 use function get_object_vars;
 use function is_array;
+use function is_string;
 use function ksort;
 
 /**
@@ -19,7 +21,7 @@ abstract class AbstractConfig implements ConfigInterface
 
 	protected string $tab;
 
-	/** @var array<string, mixed> */
+	/** @var array<string, mixed>&array{attributes?: array<string, string>} */
 	protected array $params = [];
 
 	protected function __construct(protected string $name) {}
@@ -35,6 +37,10 @@ abstract class AbstractConfig implements ConfigInterface
 	public function setAttributes(array $attributes): self
 	{
 		foreach ($attributes as $name => $value) {
+			if (! is_string($value)) {
+				throw new InvalidArgumentException('Setting attributes must be strings');
+			}
+
 			$this->setAttribute($name, $value);
 		}
 
