@@ -15,6 +15,12 @@ register_shutdown_function(static function (): void {
 	fwrite(STDOUT, $passed
 		? sprintf("OK (%d tests, %d assertions)\n", $result->numberOfTestsRun(), $result->numberOfAssertions())
 		: "FAILURES!\n");
+
+	if (! $passed) {
+		foreach ([...$result->testFailedEvents(), ...$result->testErroredEvents()] as $event) {
+			fwrite(STDOUT, $event->asString() . PHP_EOL . $event->throwable()->stackTrace() . PHP_EOL);
+		}
+	}
 });
 
 $junit = null;

@@ -13,9 +13,15 @@ use Bugo\Bricks\Forms\TextareaField;
 use Bugo\Bricks\Forms\TextField;
 
 beforeEach(function () {
+	$this->originalServer = $_SERVER;
+	$this->originalPost   = $_POST;
+
 	$_SERVER['REQUEST_METHOD'] = 'POST';
 
+	$_POST = [];
+
 	$renderer = new FormRenderer();
+
 	$this->presenter = new FormPresenter($renderer);
 
 	$this->builder = FormBuilder::make('form_id', 'Test Form')
@@ -46,6 +52,11 @@ beforeEach(function () {
 		])
 		->setScript('console.log("Hello!")')
 		->addHiddenFields(['session_id' => '123456']);
+});
+
+afterEach(function () {
+	$_SERVER = $this->originalServer;
+	$_POST   = $this->originalPost;
 });
 
 it('renders the form correctly', function () {
@@ -98,14 +109,8 @@ it('throws InvalidArgumentException when RadioField options are missing', functi
 			RadioField::make('radio_field', 'Make your choice'),
 		]);
 
-	ob_end_flush();
-
-	ob_start();
-	$this->presenter->show($builder);
-	$output = ob_get_clean();
-
-	expect($output)->toThrow(InvalidArgumentException::class);
-})->throws(InvalidArgumentException::class);
+	expect(fn() => $this->presenter->show($builder))->toThrow(InvalidArgumentException::class);
+});
 
 it('throws InvalidArgumentException when SelectField options are missing', function () {
 	$builder = FormBuilder::make('form_id', 'Test Form')
@@ -113,14 +118,8 @@ it('throws InvalidArgumentException when SelectField options are missing', funct
 			SelectField::make('select_field', 'Make your choice'),
 		]);
 
-	ob_end_flush();
-
-	ob_start();
-	$this->presenter->show($builder);
-	$output = ob_get_clean();
-
-	expect($output)->toThrow(InvalidArgumentException::class);
-})->throws(InvalidArgumentException::class);
+	expect(fn() => $this->presenter->show($builder))->toThrow(InvalidArgumentException::class);
+});
 
 it('renders the form correctly with filled $_POST data', function () {
 	$_POST['username'] = 'John Doe';
