@@ -103,11 +103,13 @@ Columns are created using `Column::make()`:
 
 ```php
 Column::make('column_name', 'Column Header')
-    ->setClass('CSS class for the column')
-    ->setStyle('CSS style for the column')
+    ->setHeaderClass('CSS class for the column header')
+    ->setHeaderStyle('CSS style for the column header')
     ->setData('key in the array returned by the getData method', 'CSS class for the data cell')
     ->setSort('column_name', 'column_name DESC'),
 ```
+
+`setClass()` and `setStyle()` are still supported and also apply to the header. Use the class/style arguments of `setData()` for data cells.
 
 There are also several child methods that inherit from `Column`: `IdColumn`, `CheckboxColumn`. You can easily create similar ones for your projects. For example, `IdColumn` is just a wrapper for a structure like:
 
@@ -282,5 +284,21 @@ The package is a dependency of [Light Portal](https://github.com/dragomano/Light
 - `make()` uses late static binding (`new static`), and `TableBuilder::__construct()` stays `protected`, so subclasses (like `PortalTableBuilder`) keep working.
 
 Changes are additive: keys, method names, parameter names (they may be passed as named arguments) and enum values are not renamed. Breaking changes are released as `0.10+` and require updating the consumer first.
+
+### Upgrading to 0.10
+
+- The unused root `PresenterInterface` has been removed. Use the form, table or breadcrumb presenter interfaces.
+- The bundled renderers implement `StringRendererInterface`: `render(array $data): string` returns markup. Use `echo $renderer->render($data)` for direct output, or keep using `Presenter::show()`. Presenters also accept existing `RendererInterface` implementations, whose `render(): void` writes to the output.
+- `Column` subclasses can call the protected constructor and extend the protected `$attributes` array; `make()` continues to return the subclass.
+- Builder `addField()`, `addButton()`, `addColumn()`, `addRow()`, `addItem()` and `addVar()` contracts accept their corresponding item interfaces.
+- Breadcrumb updates rebuild every supported property through the item's own factory, preserving its class; empty names are skipped by `build()`. The bundled renderer accepts builder arrays and item objects. Builder output contains only named arrays, which external renderers can consume directly; the string `'0'` is preserved.
+- `Row::setPosition()` validates SMF positions and accepts enum cases or their strings. Use `Row::setCustomPosition('custom_slot')` for positions supplied by custom renderers.
+- `DividerConfig` keeps its existing output. Changing it requires removing positional config indexing in Light Portal first.
+
+### HTML and text
+
+The default `TableRenderer` treats the title, header labels and cell values as trusted HTML. Use `new TableRenderer(escapeData: true)` to escape these values as text; this renders ready-made `headers`/`rows` arrays, as described above.
+
+Breadcrumb names, form labels and field values are escaped as text. Breadcrumb `before`/`after` fragments and form scripts remain trusted markup/code. `Field::setAttributes()` accepts arbitrary attributes, including event handlers; pass attribute names and scripts from trusted application code. Text escaping does not validate URLs or sanitize scripts and HTML fragments.
 
 More usage examples can be found in the tests, as well as in the [Light Portal](https://github.com/dragomano/Light-Portal/tree/master/src/Sources/LightPortal) project.
